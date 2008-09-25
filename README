@@ -1,0 +1,54 @@
+=FMiner (A chemical fragment miner)
+Andreas Maunz, 2008.
+FMiner is a chemical fragment miner for anti-monotonic and convex constraints. Currently, minimum frequency and chi-square constraints are supported.
+It is a modified version of Gaston (see below).
+
+
+==Switches (run fminer w/o arguments for allowable parameter ranges, defaults and explanations):
+
+===File Switches:
+- -s Smiles file 
+- -a Activity file
+
+===Constraint parameters:
+- -l Subgraph type, choices are paths, trees, and graphs.
+- -f Minimum frequency constraint, used for anti-monotonic pruning.
+- -p Chi-square significance level, used for statistical upper-bound pruning.
+
+===Constraint switches:
+- -c Switch off mining of only the most significant/most general representative of each backbone.
+- -x Deactivate upper bound pruning for chi-square constraint (less efficient, use only for performance evaluation).
+- -j Deactivate dynamic adjustment of upper bound (less efficient, use only for performance evaluation). Can only be set when -c is not set.
+
+===Remarks:
+- Structures are output to STDOUT in YAML format, everything else to STDERR.
+- Given an activity file the chi-square test is automatically activated. Output of occurence lists is also activated for each of the two classes.
+- Define equivalence classes for subtrees to avoid redundancy in the solution set. Two trees are equivalent, if one is a subtree of the other. 
+
+==Examples:
+
+1) Run:
+./fminer -s data/hamster_male_carcinogenicity.smi -a data/hamster_male_carcinogenicity.class -p0.5 -c > outfile.yaml
+
+2) Run without pruning:
+./fminer -s data/hamster_male_carcinogenicity.smi -a data/hamster_male_carcinogenicity.class -p0.5 -c -x > outfile.pr.yaml
+
+3) Run with free structures:
+./fminer -s data/hamster_male_carcinogenicity.smi -a data/hamster_male_carcinogenicity.class -p0.5 > outfile.yaml
+
+4) Run without adjustment of upper bound and free structures:
+./fminer -s data/hamster_male_carcinogenicity.smi -a data/hamster_male_carcinogenicity.class -p0.5 -j > outfile.yaml
+
+
+1) and 3) should outperform 2) and 4), respectively.
+
+
+==Licensing information:
+
+FMiner is free software ('free' as in 'freedom', see LICENSE). FMiner uses code from the following projects which are free in the same sense:
+
+===Gaston
+Siegfried Nijssen and Joost Kok. A Quickstart in Frequent Structure Mining Can Make a Difference. Proceedings of the SIGKDD, 2004 (http://www.liacs.nl/home/snijssen/gaston/)
+
+===OpenBabel
+The Open Babel Package, version 2.1.1 http://openbabel.sourceforge.net/ (accessed Jul 2008)

@@ -11,7 +11,7 @@ It is a modified version of Gaston (see below).
 - -a Activity file
 
 ===Constraint parameters:
-- -l Subgraph type, choices are paths, trees, and graphs.
+- -l Subgraph type, choices are paths and trees.
 - -f Minimum frequency constraint, used for anti-monotonic pruning.
 - -p Chi-square significance level, used for statistical upper-bound pruning.
 
@@ -24,8 +24,10 @@ It is a modified version of Gaston (see below).
 - Structures are output to STDOUT in YAML format, everything else to STDERR.
 - Given an activity file the chi-square test is automatically activated. Output of occurence lists is also activated for each of the two classes.
 - Define equivalence classes for subtrees to avoid redundancy in the solution set. Two trees are equivalent, if one is a subtree of the other. 
+- Each line of output is a YAML sequence, containing SMARTS fragment, p-value, and two sequences denoting positive and negative class occurrences (line numbers in Smiles file).
+- Define the FMINER_LAZAR environment variable to produce output in Linfrag format which can be used as input to Lazar.
 
-==Examples:
+==Quick Examples:
 
 1) Run:
 ./fminer -s data/hamster_male_carcinogenicity.smi -a data/hamster_male_carcinogenicity.class -p0.5 -c > outfile.yaml

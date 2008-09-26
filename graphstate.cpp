@@ -7,6 +7,7 @@
 #include <queue>
 #include <sstream>
 
+
 GraphState graphstate;
 
 #ifdef DEBUG
@@ -465,7 +466,8 @@ string GraphState::to_s ( unsigned int frequency ) {
 //  OBMol mol;
 //  string smi;
 
-  #define DO_YAML false
+  bool DO_YAML = true;
+  if (getenv("FMINER_LAZAR")) DO_YAML = false;
 
   if (!chisq.active || chisq.p >= chisq.sig) {
 
@@ -523,7 +525,7 @@ string GraphState::to_s ( unsigned int frequency ) {
           if (nodes[i].edges.size()==1) break;
       }
       DfsOut(i, oss, i);
-      if (DO_YAML) oss << "\"";
+      if (DO_YAML) oss << "\", ";
 
       // output chisq
       if (chisq.active) {
@@ -580,9 +582,11 @@ string GraphState::to_s ( unsigned int frequency ) {
                   oss << " " << ids_i[i];
               }
           }
-          oss << " ]\n";
+          if (!DO_YAML) oss << " ]\n";
+          else oss << " ]";
       }
 
+      if (DO_YAML) oss << " ]\n";
 
 
       return oss.str();

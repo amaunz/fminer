@@ -133,7 +133,8 @@ int main(int argc, char *argv[], char *envp) {
             break;
         case 'l':
             type = atoi (optarg);
-            if ((type != 1) && (type != 2) && (type != 3)) { cerr << "Error! Invalid value '" << type << "' for parameter l." << endl; status = 2; }
+            if ((type != 1) && (type != 2)) { cerr << "Error! Invalid value '" << type << "' for parameter l." << endl; status = 2; }
+//            if ((type != 1) && (type != 2) && (type != 3)) { cerr << "Error! Invalid value '" << type << "' for parameter l." << endl; status = 2; }
             break;
         case 'f':
             minfreq = atoi(optarg);
@@ -168,8 +169,8 @@ int main(int argc, char *argv[], char *envp) {
         return 1;
     }
     if (status > 1) {
-        cerr << "       -f Set minimum frequency. Allowable values for _minfreq_: 1, 2, 3, ... Default is " << def_minfreq<< "." << endl;
-        cerr << "       -l Set fragment type. Allowable values for _type_: 1 (paths), 2 (trees), 3 (graphs). Default is " << def_type << "." << endl;
+        cerr << "       -f Set minimum frequency. Allowable values for _minfreq_: 1, 2, ... Default is " << def_minfreq<< "." << endl;
+        cerr << "       -l Set fragment type. Allowable values for _type_: 1 (paths) and 2 (trees). Default is " << def_type << "." << endl;
         cerr << "       -p Set significance type. Allowable values for _p_value_: 0 <= p_value <= 1.0. Default is " << def_chisq << "." << endl;
         cerr << "       -x Switch off upper bound pruning (less efficient, use only for performance evaluation)." << endl;
         cerr << "       -c Switch off backbone mining." << endl;

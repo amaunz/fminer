@@ -215,7 +215,7 @@ int main(int argc, char *argv[], char *envp) {
     if (!do_pruning || !do_backbone) adjust_ub = false; // ensure adjust_ub only for pruning and backbone
     if (!act_file) do_backbone = false;
 
-    cerr << "Mining fragments... (bb: " << do_backbone << ", pr: " << do_pruning << ", adjub: " << adjust_ub << ", chisq sig: " << chisq.sig << ", nin freq: " << minfreq << ")" << endl;
+    cerr << "Mining fragments... (bb: " << do_backbone << ", pr: " << do_pruning << ", adjub: " << adjust_ub << ", chisq sig: " << chisq.sig << ", min freq: " << minfreq << ")" << endl;
     
     initLegStatics ();
     graphstate.init ();

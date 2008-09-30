@@ -1,0 +1,661 @@
+O-C	[ 0 ]
+C-O-C	[ 0 ]
+C-C-O-C	[ 0 ]
+
+TREES 0
+C=C(-O-C)(-C)	[ 0 ]
+r
+END TREES
+b
+C=C-O-C	[ 0 ]
+C-C=C-O-C	[ 0 ]
+
+TREES 0
+C-C(-O-C)(=C-C)	[ 0 ]
+r
+END TREES
+b
+
+TREES 1
+c-C(=C-O-C)(-C)	[ 0 ]
+r
+C-C(-O-C)(=C(-C)(-c))	[ 0 ]
+r
+b
+END TREES
+b
+c-C=C-O-C	[ 0 ]
+c:c-C=C-O-C	[ 0 ]
+c:c:c-C=C-O-C	[ 0 ]                       <= backbone  (4. von hinten)
+c:c:c:c-C=C-O-C	[ 0 ]
+c:c:c:c:c-C=C-O-C	[ 0 ]
+c:c:c:c:c:c-C=C-O-C	[ 0 ]
+
+TREES 0                                     <= 1. vH
+C-C(-O-C)(=C-c:c:c:c:c:c)	[ 0 ]
+r
+C-C(=C(-O-C)(-C))(-c:c:c:c:c:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 1
+C-C(=C-O-C)(-c:c:c:c:c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 0                                     <= 2. vH
+C-C(-O-C)(=C-c:c:c:c:c)	[ 0 ]
+r
+c:c(-C=C(-O-C)(-C))(:c:c:c:c)	[ 0 ]
+r
+b
+C-C(=C(-O-C)(-C))(-c:c:c:c:c)	[ 0 ]
+r
+c:c(-C(=C(-O-C)(-C))(-C))(:c:c:c:c)	[ 0 ]
+r
+b
+b
+END TREES
+b
+
+TREES 1
+C-C(=C-O-C)(-c:c:c:c:c)	[ 0 ]
+r
+c:c(-C(=C-O-C)(-C))(:c:c:c:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 2
+c:c(-C=C-O-C)(:c:c:c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 0                                 <= 3. vH
+C-C(-O-C)(=C-c:c:c:c)	[ 0 ]
+r
+c:c(-C=C(-O-C)(-C))(:c:c:c)	[ 0 ]
+r
+c:c:c(-C=C(-O-C)(-C))(:c:c:c)	[ 0 ]
+r
+b
+b
+C-C(=C(-O-C)(-C))(-c:c:c:c)	[ 0 ]
+r
+c:c(-C(=C(-O-C)(-C))(-C))(:c:c:c)	[ 0 ]
+r
+c:c:c(-C(=C(-O-C)(-C))(-C))(:c:c:c)	[ 0 ]
+r
+b
+b
+b
+END TREES
+b
+
+TREES 1
+C-C(=C-O-C)(-c:c:c:c)	[ 0 ]
+r
+c:c(-C(=C-O-C)(-C))(:c:c:c)	[ 0 ]
+r
+c:c:c(-C(=C-O-C)(-C))(:c:c:c)	[ 0 ]
+r
+b
+b
+END TREES
+b
+
+TREES 2
+c:c(-C=C-O-C)(:c:c:c)	[ 0 ]
+r
+c:c:c(-C=C-O-C)(:c:c:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+
+TREES 0                                         <= 4. vH (Backbone-Klasse von 'c:c:c-C=C-O-C')
+C-C(-O-C)(=C-c:c:c)	[ 0 ]                       <= I1
+r
+C-C(=C(-O-C)(-C))(-c:c:c)	[ 0 ]               <= I2
+r
+b
+c:c(-C=C(-O-C)(-C))(:c:c)	[ 0 ]
+r
+C-C(=C(-O-C)(-C))(-c(:c:c)(:c))	[ 0 ]
+r
+b
+c:c:c(-C=C(-O-C)(-C))(:c:c)	[ 0 ]
+r
+C-C(=C(-O-C)(-C))(-c(:c:c)(:c:c))	[ 0 ]
+r
+b
+b
+b
+END TREES
+b
+
+TREES 1
+C-C(=C-O-C)(-c:c:c)	[ 0 ]                       <= I3
+r
+END TREES
+b
+
+TREES 2
+c:c(-C=C-O-C)(:c:c)	[ 0 ]
+r
+C-C(=C-O-C)(-c(:c:c)(:c))	[ 0 ]
+r
+b
+c:c:c(-C=C-O-C)(:c:c)	[ 0 ]
+r
+C-C(=C-O-C)(-c(:c:c)(:c:c))	[ 0 ]
+r
+b
+b
+END TREES
+b
+                                                <= ENDE BACKBONE-KLASSE
+
+TREES 0
+C-C(-O-C)(=C-c:c)	[ 0 ]
+r
+C-C(=C(-O-C)(-C))(-c:c)	[ 0 ]
+r
+b
+c:c(-C=C(-O-C)(-C))(:c)	[ 0 ]
+r
+C-C(=C(-O-C)(-C))(-c(:c)(:c))	[ 0 ]
+r
+b
+b
+END TREES
+b
+
+TREES 1
+C-C(=C-O-C)(-c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 2
+c:c(-C=C-O-C)(:c)	[ 0 ]
+r
+C-C(=C-O-C)(-c(:c)(:c))	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 0
+C-C(-O-C)(=C-c)	[ 0 ]
+r
+END TREES
+b
+C-C	[ 0 ]
+O-C-C	[ 0 ]
+
+TREES 0
+C=C(-C)(-O)	[ 0 ]
+r
+END TREES
+b
+C=C-C	[ 0 ]
+O-C=C-C	[ 0 ]
+
+TREES 0
+c-C(-C)(=C-O)	[ 0 ]
+r
+END TREES
+b
+
+TREES 1
+C-C(=C-C)(-O)	[ 0 ]
+r
+c-C(-C)(=C(-O)(-C))	[ 0 ]
+r
+b
+END TREES
+b
+C-C=C-C	[ 0 ]
+
+TREES 1
+c-C(-C)(=C-C)	[ 0 ]
+r
+END TREES
+b
+c-C=C-C	[ 0 ]
+c:c-C=C-C	[ 0 ]
+c:c:c-C=C-C	[ 0 ]
+c:c:c:c-C=C-C	[ 0 ]
+c:c:c:c:c-C=C-C	[ 0 ]
+c:c:c:c:c:c-C=C-C	[ 0 ]
+
+TREES 1
+C-C(=C-C)(-c:c:c:c:c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 1
+C-C(=C-C)(-c:c:c:c:c)	[ 0 ]
+r
+c:c(-C(=C-C)(-C))(:c:c:c:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 2
+c:c(-C=C-C)(:c:c:c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 1
+C-C(=C-C)(-c:c:c:c)	[ 0 ]
+r
+c:c(-C(=C-C)(-C))(:c:c:c)	[ 0 ]
+r
+c:c:c(-C(=C-C)(-C))(:c:c:c)	[ 0 ]
+r
+b
+b
+END TREES
+b
+
+TREES 2
+c:c(-C=C-C)(:c:c:c)	[ 0 ]
+r
+c:c:c(-C=C-C)(:c:c:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 1
+C-C(=C-C)(-c:c:c)	[ 0 ]
+r
+c:c(-C(=C-C)(-C))(:c:c)	[ 0 ]
+r
+c:c:c(-C(=C-C)(-C))(:c:c)	[ 0 ]
+r
+b
+b
+END TREES
+b
+
+TREES 2
+c:c(-C=C-C)(:c:c)	[ 0 ]
+r
+c:c:c(-C=C-C)(:c:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 1
+C-C(=C-C)(-c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 2
+c:c(-C=C-C)(:c)	[ 0 ]
+r
+C-C(=C-C)(-c(:c)(:c))	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 1
+c-C(-C)(=C)	[ 0 ]
+r
+END TREES
+b
+c-C-C	[ 0 ]
+c:c-C-C	[ 0 ]
+c:c:c-C-C	[ 0 ]
+c:c:c:c-C-C	[ 0 ]
+c:c:c:c:c-C-C	[ 0 ]
+c:c:c:c:c:c-C-C	[ 0 ]
+
+TREES 0
+C=C(-C)(-c:c:c:c:c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 0
+C=C(-C)(-c:c:c:c:c)	[ 0 ]
+r
+c:c(-C(-C)(=C))(:c:c:c:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 1
+c:c(-C-C)(:c:c:c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 0
+C=C(-C)(-c:c:c:c)	[ 0 ]
+r
+c:c(-C(-C)(=C))(:c:c:c)	[ 0 ]
+r
+c:c:c(-C(-C)(=C))(:c:c:c)	[ 0 ]
+r
+b
+b
+END TREES
+b
+
+TREES 1
+c:c(-C-C)(:c:c:c)	[ 0 ]
+r
+c:c:c(-C-C)(:c:c:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 0
+C=C(-C)(-c:c:c)	[ 0 ]
+r
+c:c(-C(-C)(=C))(:c:c)	[ 0 ]
+r
+c:c:c(-C(-C)(=C))(:c:c)	[ 0 ]
+r
+b
+b
+END TREES
+b
+
+TREES 1
+c:c(-C-C)(:c:c)	[ 0 ]
+r
+c:c:c(-C-C)(:c:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 0
+C=C(-C)(-c:c)	[ 0 ]
+r
+c:c(-C(-C)(=C))(:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 1
+c:c(-C-C)(:c)	[ 0 ]
+r
+END TREES
+b
+C=C	[ 0 ]
+O-C=C	[ 0 ]
+c-C=C-O	[ 0 ]
+c:c-C=C-O	[ 0 ]
+c:c:c-C=C-O	[ 0 ]
+c:c:c:c-C=C-O	[ 0 ]
+c:c:c:c:c-C=C-O	[ 0 ]
+c:c:c:c:c:c-C=C-O	[ 0 ]
+
+TREES 0
+C-C(=C-O)(-c:c:c:c:c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 1
+C-C(=C-c:c:c:c:c:c)(-O)	[ 0 ]
+r
+C-C(=C(-O)(-C))(-c:c:c:c:c:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 1
+c:c(-C=C-O)(:c:c:c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 2
+C-C(=C-O)(-c:c:c:c:c)	[ 0 ]
+r
+c:c(-C(=C-O)(-C))(:c:c:c:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 3
+C-C(=C-c:c:c:c:c)(-O)	[ 0 ]
+r
+c:c(-C=C(-O)(-C))(:c:c:c:c)	[ 0 ]
+r
+b
+C-C(=C(-O)(-C))(-c:c:c:c:c)	[ 0 ]
+r
+c:c(-C(=C(-O)(-C))(-C))(:c:c:c:c)	[ 0 ]
+r
+b
+b
+END TREES
+b
+
+TREES 1
+c:c(-C=C-O)(:c:c:c)	[ 0 ]
+r
+c:c:c(-C=C-O)(:c:c:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 2
+C-C(=C-O)(-c:c:c:c)	[ 0 ]
+r
+c:c(-C(=C-O)(-C))(:c:c:c)	[ 0 ]
+r
+c:c:c(-C(=C-O)(-C))(:c:c:c)	[ 0 ]
+r
+b
+b
+END TREES
+b
+
+TREES 3
+C-C(=C-c:c:c:c)(-O)	[ 0 ]
+r
+c:c(-C=C(-O)(-C))(:c:c:c)	[ 0 ]
+r
+c:c:c(-C=C(-O)(-C))(:c:c:c)	[ 0 ]
+r
+b
+b
+C-C(=C(-O)(-C))(-c:c:c:c)	[ 0 ]
+r
+c:c(-C(=C(-O)(-C))(-C))(:c:c:c)	[ 0 ]
+r
+c:c:c(-C(=C(-O)(-C))(-C))(:c:c:c)	[ 0 ]
+r
+b
+b
+b
+END TREES
+b
+
+TREES 1
+c:c(-C=C-O)(:c:c)	[ 0 ]
+r
+c:c:c(-C=C-O)(:c:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 2
+C-C(=C-O)(-c:c:c)	[ 0 ]
+r
+c:c(-C(=C-O)(-C))(:c:c)	[ 0 ]
+r
+c:c:c(-C(=C-O)(-C))(:c:c)	[ 0 ]
+r
+b
+b
+END TREES
+b
+
+TREES 3
+C-C(=C-c:c:c)(-O)	[ 0 ]
+r
+c:c(-C=C(-O)(-C))(:c:c)	[ 0 ]
+r
+c:c:c(-C=C(-O)(-C))(:c:c)	[ 0 ]
+r
+b
+b
+C-C(=C(-O)(-C))(-c:c:c)	[ 0 ]
+r
+c:c(-C(=C(-O)(-C))(-C))(:c:c)	[ 0 ]
+r
+c:c:c(-C(=C(-O)(-C))(-C))(:c:c)	[ 0 ]
+r
+b
+b
+b
+END TREES
+b
+
+TREES 1
+c:c(-C=C-O)(:c)	[ 0 ]
+r
+C-C(=C-O)(-c(:c)(:c))	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 2
+C-C(=C-O)(-c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 3
+C-C(=C-c:c)(-O)	[ 0 ]
+r
+C-C(=C(-O)(-C))(-c:c)	[ 0 ]
+r
+b
+c:c(-C=C(-O)(-C))(:c)	[ 0 ]
+r
+C-C(=C(-O)(-C))(-c(:c)(:c))	[ 0 ]
+r
+b
+b
+END TREES
+b
+
+TREES 2
+C-C(=C-c)(-O)	[ 0 ]
+r
+END TREES
+b
+c-C=C	[ 0 ]
+c:c-C=C	[ 0 ]
+c:c:c-C=C	[ 0 ]
+c:c:c:c-C=C	[ 0 ]
+c:c:c:c:c-C=C	[ 0 ]
+c:c:c:c:c:c-C=C	[ 0 ]
+
+TREES 3
+c:c(-C=C)(:c:c:c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 3
+c:c(-C=C)(:c:c:c)	[ 0 ]
+r
+c:c:c(-C=C)(:c:c:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 3
+c:c(-C=C)(:c:c)	[ 0 ]
+r
+c:c:c(-C=C)(:c:c)	[ 0 ]
+r
+b
+END TREES
+b
+
+TREES 3
+c:c(-C=C)(:c)	[ 0 ]
+r
+END TREES
+b
+c-C	[ 0 ]
+c:c-C	[ 0 ]
+c:c:c-C	[ 0 ]
+c:c:c:c-C	[ 0 ]
+c:c:c:c:c-C	[ 0 ]
+c:c:c:c:c:c-C	[ 0 ]
+
+TREES 2
+c:c(-C)(:c:c:c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 2
+c:c(-C)(:c:c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 2
+c:c(-C)(:c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 2
+c:c(-C)(:c)	[ 0 ]
+r
+END TREES
+b
+c:c	[ 0 ]
+c:c:c	[ 0 ]
+c:c:c:c	[ 0 ]
+c:c:c:c:c	[ 0 ]
+c:c:c:c:c:c	[ 0 ]
+
+TREES 2
+C-c(:c:c)(:c:c:c)	[ 0 ]
+r
+END TREES
+b
+
+TREES 3
+C-c(:c:c)(:c:c)	[ 0 ]
+r
+END TREES
+b

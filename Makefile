@@ -1,29 +1,31 @@
-# Edit according to your needs
 PROGRAM = fminer
+FMINER_DIR = ../libfminer
+INCLUDES = -I$(FMINER_DIR)/include/openbabel-2.0/
+INCLUDES +=  -I$(FMINER_DIR)
+LIBDIR = ../libfminer/lib
 
-OBJ = database.o patterntree.o legoccurrence.o closeleg.o graphstate.o patterngraph.o path.o constraints.o
+OBJ = $(FMINER_DIR)/database.o $(FMINER_DIR)/patterntree.o $(FMINER_DIR)/legoccurrence.o $(FMINER_DIR)/closeleg.o $(FMINER_DIR)/graphstate.o $(FMINER_DIR)/patterngraph.o $(FMINER_DIR)/path.o $(FMINER_DIR)/constraints.o
 
 CC            = g++
-CXXFLAGS      = -g -Wall -O3 -I./include/openbabel-2.0/
+CXXFLAGS      = -g -Wall -O3 $(INCLUDES)
 LIBS	      = -lm -ldl -lopenbabel -lgsl -lgslcblas
-LDFLAGS       = -L./lib
-RPATH         = -Wl,-rpath,./lib
+LDFLAGS       = -L$(LIBDIR)
+RPATH         = -Wl,-rpath,$(LIBDIR)
 
 .PHONY:
-#all: graphstate.o
 all: $(PROGRAM) 
 
 $(PROGRAM): $(OBJ) $(PROGRAM).o
 	$(CC) $(CXXFLAGS) $(LIBS) $(LDFLAGS) -o $(PROGRAM) $(OBJ) $(PROGRAM).o 
 
-database.o: database.h
-patterntree.o: patterntree.cpp patterntree.h patterngraph.h graphstate.h
-legoccurrence.o: legoccurrence.h legoccurrence.cpp closeleg.h database.h graphstate.h
-closeleg.o: closeleg.cpp closeleg.h misc.h
-graphstate.o: graphstate.cpp graphstate.h database.h misc.h
-patterngraph.o: patterngraph.cpp patterngraph.h graphstate.h
-path.o: path.cpp path.h patterntree.h patterngraph.h graphstate.h
-constraints.o: constraints.cpp constraints.h
+$(FMINER_DIR)/database.o: $(FMINER_DIR)/database.h
+$(FMINER_DIR)/patterntree.o: $(FMINER_DIR)/patterntree.cpp $(FMINER_DIR)/patterntree.h $(FMINER_DIR)/patterngraph.h $(FMINER_DIR)/graphstate.h
+$(FMINER_DIR)/legoccurrence.o: $(FMINER_DIR)/legoccurrence.h $(FMINER_DIR)/legoccurrence.cpp $(FMINER_DIR)/closeleg.h $(FMINER_DIR)/database.h $(FMINER_DIR)/graphstate.h
+$(FMINER_DIR)/closeleg.o: $(FMINER_DIR)/closeleg.cpp $(FMINER_DIR)/closeleg.h $(FMINER_DIR)/misc.h
+$(FMINER_DIR)/graphstate.o: $(FMINER_DIR)/graphstate.cpp $(FMINER_DIR)/graphstate.h $(FMINER_DIR)/database.h $(FMINER_DIR)/misc.h
+$(FMINER_DIR)/patterngraph.o: $(FMINER_DIR)/patterngraph.cpp $(FMINER_DIR)/patterngraph.h $(FMINER_DIR)/graphstate.h
+$(FMINER_DIR)/path.o: $(FMINER_DIR)/path.cpp $(FMINER_DIR)/path.h $(FMINER_DIR)/patterntree.h $(FMINER_DIR)/patterngraph.h $(FMINER_DIR)/graphstate.h
+$(FMINER_DIR)/constraints.o: $(FMINER_DIR)/constraints.cpp $(FMINER_DIR)/constraints.h
 
 .PHONY:
 clean:

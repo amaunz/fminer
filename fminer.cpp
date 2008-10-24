@@ -119,6 +119,64 @@ void read_smi (char* smi_file) {
 
 }
 
+void read_act (char* act_file) {
+    ifstream input;
+    string line;
+    string tmp_field;
+    string no_id;
+    string act_name;
+    Tid tid=0;
+    unsigned int line_nr = 0;
+    
+    input.open(act_file);
+    if (!input) {
+        cerr << "Cannot open " << act_file << endl;
+        exit(1);
+    }
+
+	while (getline(input, line)) {
+		istringstream iss(line); 
+		unsigned int field_nr = 0;
+		while(getline(iss, tmp_field, '\t')) {	// split at tabs
+			remove_dos_cr(&tmp_field);
+			if (field_nr == 0) {		// ID
+				if (tmp_field == no_id)		// ignore compounds without structures
+					break;
+				else {
+                    tid = (Tid) atoi(tmp_field.c_str());
+                    if (tid == 0) { cerr << "Error! Invalid ID: '" << tmp_field << "' in file " << act_file << ", line " << line_nr+1 << "." << endl; exit(1); }
+					if (database.trees_map[tid] == NULL) {	// ignore compounds without structures
+						no_id = tmp_field;
+						cerr << "No structure for ID " << tid << ". Ignoring entry!" << endl;
+						break;
+					}
+				}
+			}
+			else if (field_nr == 1) {	// ACTIVITY NAME
+				act_name = tmp_field;
+			}
+			else if (field_nr == 2) {	// ACTIVITY VALUES
+                stringstream str;
+                str  << tmp_field;
+                int act_value;
+                str >> act_value;
+                if ((act_value != 0) && act_value != 1) { cerr << "Error! Invalid activity: '" << tmp_field << "' in file " << act_file << ", line " << line_nr+1 << "." << endl; exit(1); }
+                if ((database.trees_map[tid]->activity = (bool) act_value)) { chisq.na++; }
+                else { chisq.ni++; }
+			}
+			else {
+				cerr << "Error! More than 3 columns at line " << line_nr << "." << endl;
+				exit(1);
+			}
+			field_nr++;
+		}
+		line_nr++;
+	}
+
+    chisq.n = chisq.na + chisq.ni;
+}
+
+
 // main
 int main(int argc, char *argv[], char *envp) {
 
@@ -212,7 +270,7 @@ int main(int argc, char *argv[], char *envp) {
     
     if (chisq.active) {
         cerr << "Reading activities..." << endl;
-        database.read_act (act_file);
+        read_act (act_file);
         each (database.trees) {
             if (database.trees[i]->activity == -1) {
                 cerr << "Error! ID " << database.trees[i]->orig_tid << " is missing activity information." << endl;

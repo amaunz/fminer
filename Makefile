@@ -16,14 +16,14 @@ RPATH         = -Wl,-rpath,$(LIBDIR):$(LIBDIR)/lib
 # TARGETS
 .PHONY:
 all: $(PROGRAM) 
+lib: $(MAKE) -C $(LIBDIR)
 
-$(PROGRAM):
-	$(MAKE) -C $(LIBDIR)
+$(PROGRAM): $(PROGRAM).cpp
 	$(CC) $(CXXFLAGS) $(INCLUDE) \
 	      $(LIBS) \
 	      $(LDFLAGS) \
 	      $(RPATH) \
-	      -o $@ $(PROGRAM).cpp
+	      -o $@ $<
 
 .PHONY:
 clean:

@@ -77,17 +77,51 @@ void remove_dos_cr(string* str) {
 	for (string::size_type i = str->find(nl); i!=string::npos; i=str->find(nl)) str->erase(i,1); // erase dos cr
 }
 
+void read_smi (char* smi_file) {
+    Tid tree_nr = 0; 
+    Tid tree_id = 0;
+    int line_nr = 1;
+
+    ifstream input;
+    string line;
+    string tmp_field;
+    input.open(smi_file);
+
+    if (!input) {
+        cerr << "Cannot open " << smi_file << endl;
+        exit(1);
+    }
+
+    while (getline(input, line)) {
+        istringstream iss(line);
+        string id = "";
+        int field_nr = 0;
+        while(getline(iss, tmp_field, '\t')) {  // split at tabs
+            if (field_nr == 0) { // ID
+                tree_id = (unsigned int) atoi (tmp_field.c_str());
+                if (tree_id == 0) { cerr << "Error! Invalid ID: '" << tmp_field << "' in file " << smi_file << ", line " << line_nr << "." << endl; exit(1); }
+            }
+            else if (field_nr == 1) { // SMILES
+                if (database.readTree (tmp_field , tree_nr, tree_id, line_nr)) {
+                    tree_nr++;
+                }
+                else {
+                    cerr << "on line " << line_nr << ", id " << tree_id << "." << endl;
+                }
+            }
+            field_nr++;
+        }
+        line_nr++;
+    }
+
+    cerr << tree_nr << " compounds" << endl;
+    input.close();
+
+}
+
 // main
 int main(int argc, char *argv[], char *envp) {
 
-    /*
-   for(int i=0; i < argc; i++)
-      {
-         printf("argv[%d] = %s ",i,argv[i]);
-         printf("\n");
-      }
-   */
- 
     
     int status=1;
     char* smi_file = NULL;
@@ -105,22 +139,9 @@ int main(int argc, char *argv[], char *envp) {
        }
        else {
             status=1;
-//          if (argv[argc-1][0]!='-') { smi_file = argv[argc-1]; status=0; }
-//          else status=1;
        }
     }
     else status=1;
-
-    /*
-    if (argc==2) {
-       if (argv[1][0]!='-') {
-           smi_file = argv[1]; status=0;
-       }
-       else status=1;
-    }
-    */
-
-//    if (argc<2) status = 1;
 
     char c;
 
@@ -134,7 +155,6 @@ int main(int argc, char *argv[], char *envp) {
         case 'l':
             type = atoi (optarg);
             if ((type != 1) && (type != 2)) { cerr << "Error! Invalid value '" << type << "' for parameter l." << endl; status = 2; }
-//            if ((type != 1) && (type != 2) && (type != 3)) { cerr << "Error! Invalid value '" << type << "' for parameter l." << endl; status = 2; }
             break;
         case 'f':
             minfreq = atoi(optarg);
@@ -188,7 +208,7 @@ int main(int argc, char *argv[], char *envp) {
     //////////
 
     cerr << "Reading compounds..." << endl;
-    database.read_smi (smi_file);
+    read_smi (smi_file);
     
     if (chisq.active) {
         cerr << "Reading activities..." << endl;

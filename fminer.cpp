@@ -37,6 +37,8 @@ using namespace OpenBabel;
 
 // global constraints
 
+vector<string> result;
+
 float def_chisq = 0.95;
 ChisqConstraint chisq(def_chisq);
 
@@ -302,10 +304,14 @@ int main(int argc, char *argv[], char *envp) {
 //    else              cout << "# - [ smiles,    frequency ]\n";
  
     clock_t t1 = clock ();
-    for ( int i = 0; i < (int) database.nodelabels.size (); i++ ) {
-        if ( database.nodelabels[i].frequency >= minfreq && database.nodelabels[i].frequentedgelabels.size () ) {
-            Path path(i);
+    for ( int j = 0; j < (int) database.nodelabels.size (); j++ ) {
+        result.clear();
+        if ( database.nodelabels[j].frequency >= minfreq && database.nodelabels[j].frequentedgelabels.size () ) {
+            Path path(j);
             path.expand ();
+            each (result) {
+                cout << result[i] << endl;
+            }
         }
     }
     clock_t t2 = clock ();

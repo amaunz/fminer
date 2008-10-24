@@ -2,21 +2,28 @@
 PROGRAM = fminer
 
 # OPTIONS
-VPATH         = ../libfminer
-INCLUDE       = -I$(VPATH)/include/openbabel-2.0/
-INCLUDE      +=  -I$(VPATH)
+LIBDIR        = ../libfminer
+INCLUDE       = -I$(LIBDIR)/include/openbabel-2.0/
+INCLUDE      += -I$(LIBDIR)
+LDFLAGS       = -L$(LIBDIR)/lib
+LDFLAGS      += -L$(LIBDIR)
 
 CC            = g++
-CXXFLAGS      = -g -Wall -O3 $(INCLUDE)
-LIBS	      = -lm -ldl -lopenbabel -lgsl -lgslcblas
-LDFLAGS       = -L$(VPATH)/lib
-RPATH         = -Wl,-rpath,$(VPATH)
+CXXFLAGS      = -g -Wall -O3
+LIBS	      = -lopenbabel -lfminer -lgsl -lgslcblas
+RPATH         = -Wl,-rpath,$(LIBDIR):$(LIBDIR)/lib
 
 # TARGETS
 .PHONY:
 all: $(PROGRAM) 
-$(PROGRAM): -lfminer $(PROGRAM).o
-	$(CC) $(CXXFLAGS) $(LIBS) $(LDFLAGS) $(RPATH) -o $@ $(OBJ) $^ 
+
+$(PROGRAM):
+	$(MAKE) -C $(LIBDIR)
+	$(CC) $(CXXFLAGS) $(INCLUDE) \
+	      $(LIBS) \
+	      $(LDFLAGS) \
+	      $(RPATH) \
+	      -o $@ $(PROGRAM).cpp
 
 .PHONY:
 clean:

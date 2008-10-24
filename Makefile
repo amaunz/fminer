@@ -14,10 +14,9 @@ LIBS	      = -lopenbabel -lfminer -lgsl -lgslcblas
 RPATH         = -Wl,-rpath,$(LIBDIR):$(LIBDIR)/lib
 
 # TARGETS
-.PHONY:
-all: $(PROGRAM) 
-lib: $(MAKE) -C $(LIBDIR)
-
+all: lib $(PROGRAM) 
+lib: 
+	$(MAKE) -C $(LIBDIR)
 $(PROGRAM): $(PROGRAM).cpp
 	$(CC) $(CXXFLAGS) $(INCLUDE) \
 	      $(LIBS) \

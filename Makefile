@@ -17,7 +17,7 @@ RPATH         = -Wl,-rpath,$(LIBDIR):$(LIBDIR)/lib
 all: lib $(PROGRAM) 
 lib: 
 	$(MAKE) -C $(LIBDIR)
-$(PROGRAM): $(PROGRAM).cpp
+$(PROGRAM): main2.cpp
 	$(CC) $(CXXFLAGS) $(INCLUDE) \
 	      $(LIBS) \
 	      $(LDFLAGS) \

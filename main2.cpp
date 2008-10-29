@@ -45,7 +45,6 @@ float def_chisq = 0.95;
 //ChisqConstraint chisq(def_chisq);
 
 Frequency def_minfreq = 2;
-Frequency minfreq = def_minfreq;
 
 int def_type = 2;
 int type = def_type;
@@ -190,6 +189,7 @@ int main(int argc, char *argv[], char *envp) {
     char* smi_file = NULL;
     char* act_file = NULL;
     float chisq_sig = 0.0;
+    Frequency minfreq = def_minfreq;
 
     if (argc>2) {
        if (argv[argc-2][0]!='-') {

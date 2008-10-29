@@ -36,25 +36,7 @@
 using namespace std;
 using namespace OpenBabel;
 
-// global constraints
 FMiner fm;
-
-vector<string> result;
-
-float def_chisq = 0.95;
-//ChisqConstraint chisq(def_chisq);
-
-Frequency def_minfreq = 2;
-
-int def_type = 2;
-
-bool updated = true;
-
-//Database database; 
-Statistics statistics; 
-
-int maxsize = ( 1 << ( sizeof(NodeId)*8 ) ) - 1; // safe default for the largest allowed pattern
-string outl = "";
 
 // helper routines
 void puti ( FILE *f, int i ) {
@@ -180,6 +162,10 @@ void read_act (char* act_file) {
 // main
 int main(int argc, char *argv[], char *envp) {
 
+
+    float def_chisq = 0.95;
+    Frequency def_minfreq = 2;
+    int def_type = 2;
     
     int status=1;
     char* smi_file = NULL;
@@ -310,12 +296,12 @@ int main(int argc, char *argv[], char *envp) {
  
     clock_t t1 = clock ();
     for ( int j = 0; j < (int) fm.database.nodelabels.size (); j++ ) {
-        result.clear();
+        fm.result.clear();
         if ( fm.database.nodelabels[j].frequency >= minfreq && fm.database.nodelabels[j].frequentedgelabels.size () ) {
             Path path(j);
             path.expand ();
-            each (result) {
-                cout << result[i] << endl;
+            each (fm.result) {
+                cout << fm.result[i] << endl;
             }
         }
     }

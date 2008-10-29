@@ -31,32 +31,12 @@
 #include "legoccurrence.h"
 #include "graphstate.h"
 #include "constraints.h"
+#include "fminer.h"
 
 using namespace std;
 using namespace OpenBabel;
 
-// global constraints
-
-vector<string> result;
-
-float def_chisq = 0.95;
-ChisqConstraint chisq(def_chisq);
-
-Frequency def_minfreq = 2;
-Frequency minfreq = def_minfreq;
-
-int def_type = 2;
-int type = def_type;
-
-bool adjust_ub = true;
-bool do_pruning = true;
-bool do_backbone = true;
-bool updated = true;
-
-Database database; 
-Statistics statistics; 
-int maxsize = ( 1 << ( sizeof(NodeId)*8 ) ) - 1; // safe default for the largest allowed pattern
-string outl = "";
+FMiner* fm;
 
 // helper routines
 void puti ( FILE *f, int i ) {
@@ -104,7 +84,7 @@ void read_smi (char* smi_file) {
                 if (tree_id == 0) { cerr << "Error! Invalid ID: '" << tmp_field << "' in file " << smi_file << ", line " << line_nr << "." << endl; exit(1); }
             }
             else if (field_nr == 1) { // SMILES
-                if (database.readTree (tmp_field , tree_nr, tree_id, line_nr)) {
+                if (fm->database.readTree (tmp_field , tree_nr, tree_id, line_nr)) {
                     tree_nr++;
                 }
                 else {
@@ -116,7 +96,7 @@ void read_smi (char* smi_file) {
         line_nr++;
     }
 
-    cerr << tree_nr << " compounds" << endl;
+    cerr << fm->database.trees.size() << " compounds" << endl;
     input.close();
 
 }
@@ -147,7 +127,7 @@ void read_act (char* act_file) {
 				else {
                     tid = (Tid) atoi(tmp_field.c_str());
                     if (tid == 0) { cerr << "Error! Invalid ID: '" << tmp_field << "' in file " << act_file << ", line " << line_nr+1 << "." << endl; exit(1); }
-					if (database.trees_map[tid] == NULL) {	// ignore compounds without structures
+					if (fm->database.trees_map[tid] == NULL) {	// ignore compounds without structures
 						no_id = tmp_field;
 						cerr << "No structure for ID " << tid << ". Ignoring entry!" << endl;
 						break;
@@ -163,8 +143,8 @@ void read_act (char* act_file) {
                 int act_value;
                 str >> act_value;
                 if ((act_value != 0) && act_value != 1) { cerr << "Error! Invalid activity: '" << tmp_field << "' in file " << act_file << ", line " << line_nr+1 << "." << endl; exit(1); }
-                if ((database.trees_map[tid]->activity = (bool) act_value)) { chisq.na++; }
-                else { chisq.ni++; }
+                if ((fm->database.trees_map[tid]->activity = (bool) act_value)) { fm->AddChiSqNa();}
+                else { fm->AddChiSqNi();}
 			}
 			else {
 				cerr << "Error! More than 3 columns at line " << line_nr << "." << endl;
@@ -175,17 +155,29 @@ void read_act (char* act_file) {
 		line_nr++;
 	}
 
-    chisq.n = chisq.na + chisq.ni;
 }
 
 
 // main
 int main(int argc, char *argv[], char *envp) {
 
+
+    float def_chisq = 0.95;
+    float chisq_sig = def_chisq;
+
+    Frequency def_minfreq = 2;
+    Frequency minfreq = def_minfreq;
+
+    int def_type = 2;
+    int type = def_type;
     
     int status=1;
     char* smi_file = NULL;
     char* act_file = NULL;
+
+    bool adjust_ub = true;
+    bool do_pruning = true;
+    bool do_backbone = true;
 
     if (argc>2) {
        if (argv[argc-2][0]!='-') {
@@ -194,7 +186,7 @@ int main(int argc, char *argv[], char *envp) {
                status=1;
            }
            else {
-               act_file = argv[argc-1]; chisq.active=1;
+               act_file = argv[argc-1]; //chisq.active=1;
            }
        }
        else {
@@ -208,8 +200,8 @@ int main(int argc, char *argv[], char *envp) {
     while ((c = getopt(argc, argv, "p:l:f:cxjh")) != -1) {
         switch(c) {
         case 'p':
-            chisq.sig = atof (optarg);
-            if (chisq.sig < 0.0 || chisq.sig > 1.0) { cerr << "Error! Invalid value '" << chisq.sig << "' for parameter p." << endl; status = 2; }
+            chisq_sig = atof (optarg);
+            if (chisq_sig < 0.0 || chisq_sig > 1.0) { cerr << "Error! Invalid value '" << chisq_sig << "' for parameter p." << endl; status = 2; }
             if (!act_file) status = 2;
             break;
         case 'l':
@@ -222,11 +214,9 @@ int main(int argc, char *argv[], char *envp) {
             break;
         case 'c':
             do_backbone = false;
-            if (!chisq.active) status = 2;
             break;
         case 'x':
             do_pruning = false;
-            if (!chisq.active) status = 2;
             break;
         case 'j':
             adjust_ub = false;
@@ -262,6 +252,9 @@ int main(int argc, char *argv[], char *envp) {
     }  
 
 
+    fm = new FMiner (type, minfreq, chisq_sig, do_backbone);
+    fm->SetDynamicUpperBound(adjust_ub);
+    fm->SetPruning(do_pruning);
 
     //////////
     // READ //
@@ -270,52 +263,43 @@ int main(int argc, char *argv[], char *envp) {
     cerr << "Reading compounds..." << endl;
     read_smi (smi_file);
     
-    if (chisq.active) {
-        cerr << "Reading activities..." << endl;
-        read_act (act_file);
-        each (database.trees) {
-            if (database.trees[i]->activity == -1) {
-                cerr << "Error! ID " << database.trees[i]->orig_tid << " is missing activity information." << endl;
-                exit(1);
-            }
+    cerr << "Reading activities..." << endl;
+    read_act (act_file);
+    each (fm->database.trees) {
+        if (fm->database.trees[i]->activity == -1) {
+            cerr << "Error! ID " << fm->database.trees[i]->orig_tid << " is missing activity information." << endl;
+            exit(1);
         }
     }
-    else do_pruning = false; // ensure every recursion is done
 
-    database.edgecount ();
-    database.reorder ();
-
-
+    fm->database.edgecount ();
+    fm->database.reorder ();
 
     //////////
     // MINE //
     //////////
     
+    if (!do_pruning || !do_backbone) fm->SetDynamicUpperBound(false); // ensure adjust_ub only for pruning and backbone
 
-    if (!do_pruning || !do_backbone) adjust_ub = false; // ensure adjust_ub only for pruning and backbone
-    if (!act_file) do_backbone = false;
-
-    cerr << "Mining fragments... (bb: " << do_backbone << ", pr: " << do_pruning << ", adjub: " << adjust_ub << ", chisq sig: " << chisq.sig << ", min freq: " << minfreq << ")" << endl;
+    cerr << "Mining fragments... (bb: " << do_backbone << ", pr: " << do_pruning << ", adjub: " << adjust_ub << ", chisq sig: " << chisq_sig << ", min freq: " << minfreq << ")" << endl;
     
     initLegStatics ();
     graphstate.init ();
 
-//    if (chisq.active) cout << "# - [ smiles,    p_chisq,    occ_list_active,    occ_list_inactive ]\n";
-//    else              cout << "# - [ smiles,    frequency ]\n";
- 
     clock_t t1 = clock ();
-    for ( int j = 0; j < (int) database.nodelabels.size (); j++ ) {
-        result.clear();
-        if ( database.nodelabels[j].frequency >= minfreq && database.nodelabels[j].frequentedgelabels.size () ) {
+    for ( int j = 0; j < (int) fm->database.nodelabels.size (); j++ ) {
+        fm->result.clear();
+        if ( fm->database.nodelabels[j].frequency >= minfreq && fm->database.nodelabels[j].frequentedgelabels.size () ) {
             Path path(j);
             path.expand ();
-            each (result) {
-                cout << result[i] << endl;
+            each (fm->result) {
+                cout << fm->result[i] << endl;
             }
         }
     }
     clock_t t2 = clock ();
-
     cerr << "Approximate total runtime: " << ( (float) t2 - t1 ) / CLOCKS_PER_SEC << "s" << endl;
+
+    delete fm;
 
 }

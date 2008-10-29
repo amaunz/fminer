@@ -17,7 +17,7 @@ RPATH         = -Wl,-rpath,$(LIBDIR):$(LIBDIR)/lib
 all: lib $(PROGRAM) 
 lib: 
 	$(MAKE) -C $(LIBDIR)
-$(PROGRAM): main2.cpp
+$(PROGRAM): main.cpp
 	$(CC) $(CXXFLAGS) $(INCLUDE) \
 	      $(LIBS) \
 	      $(LDFLAGS) \
@@ -26,4 +26,4 @@ $(PROGRAM): main2.cpp
 
 .PHONY:
 clean:
-	-rm -rf *.o $(PROGRAM) 
+	-rm -rf $(PROGRAM) 

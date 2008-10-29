@@ -55,7 +55,7 @@ bool do_pruning = true;
 bool do_backbone = true;
 bool updated = true;
 
-Database database; 
+//Database database; 
 Statistics statistics; 
 
 int maxsize = ( 1 << ( sizeof(NodeId)*8 ) ) - 1; // safe default for the largest allowed pattern
@@ -107,7 +107,7 @@ void read_smi (char* smi_file) {
                 if (tree_id == 0) { cerr << "Error! Invalid ID: '" << tmp_field << "' in file " << smi_file << ", line " << line_nr << "." << endl; exit(1); }
             }
             else if (field_nr == 1) { // SMILES
-                if (database.readTree (tmp_field , tree_nr, tree_id, line_nr)) {
+                if (fm.database.readTree (tmp_field , tree_nr, tree_id, line_nr)) {
                     tree_nr++;
                 }
                 else {
@@ -150,7 +150,7 @@ void read_act (char* act_file) {
 				else {
                     tid = (Tid) atoi(tmp_field.c_str());
                     if (tid == 0) { cerr << "Error! Invalid ID: '" << tmp_field << "' in file " << act_file << ", line " << line_nr+1 << "." << endl; exit(1); }
-					if (database.trees_map[tid] == NULL) {	// ignore compounds without structures
+					if (fm.database.trees_map[tid] == NULL) {	// ignore compounds without structures
 						no_id = tmp_field;
 						cerr << "No structure for ID " << tid << ". Ignoring entry!" << endl;
 						break;
@@ -166,7 +166,7 @@ void read_act (char* act_file) {
                 int act_value;
                 str >> act_value;
                 if ((act_value != 0) && act_value != 1) { cerr << "Error! Invalid activity: '" << tmp_field << "' in file " << act_file << ", line " << line_nr+1 << "." << endl; exit(1); }
-                if ((database.trees_map[tid]->activity = (bool) act_value)) { fm.AddChiSqNa(); }
+                if ((fm.database.trees_map[tid]->activity = (bool) act_value)) { fm.AddChiSqNa(); }
                 else { fm.AddChiSqNi(); }
 			}
 			else {
@@ -279,15 +279,15 @@ int main(int argc, char *argv[], char *envp) {
     
     cerr << "Reading activities..." << endl;
     read_act (act_file);
-    each (database.trees) {
-        if (database.trees[i]->activity == -1) {
-            cerr << "Error! ID " << database.trees[i]->orig_tid << " is missing activity information." << endl;
+    each (fm.database.trees) {
+        if (fm.database.trees[i]->activity == -1) {
+            cerr << "Error! ID " << fm.database.trees[i]->orig_tid << " is missing activity information." << endl;
             exit(1);
         }
     }
 
-    database.edgecount ();
-    database.reorder ();
+    fm.database.edgecount ();
+    fm.database.reorder ();
 
 
 
@@ -308,9 +308,9 @@ int main(int argc, char *argv[], char *envp) {
 //    else              cout << "# - [ smiles,    frequency ]\n";
  
     clock_t t1 = clock ();
-    for ( int j = 0; j < (int) database.nodelabels.size (); j++ ) {
+    for ( int j = 0; j < (int) fm.database.nodelabels.size (); j++ ) {
         result.clear();
-        if ( database.nodelabels[j].frequency >= minfreq && database.nodelabels[j].frequentedgelabels.size () ) {
+        if ( fm.database.nodelabels[j].frequency >= minfreq && fm.database.nodelabels[j].frequentedgelabels.size () ) {
             Path path(j);
             path.expand ();
             each (result) {

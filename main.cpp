@@ -60,9 +60,7 @@ void remove_dos_cr(string* str) {
 }
 
 void read_smi (char* smi_file) {
-    Tid tree_nr = 0; 
     Tid tree_id = 0;
-    int line_nr = 1;
 
     ifstream input;
     string line;
@@ -81,22 +79,15 @@ void read_smi (char* smi_file) {
         while(getline(iss, tmp_field, '\t')) {  // split at tabs
             if (field_nr == 0) { // ID
                 tree_id = (unsigned int) atoi (tmp_field.c_str());
-                if (tree_id == 0) { cerr << "Error! Invalid ID: '" << tmp_field << "' in file " << smi_file << ", line " << line_nr << "." << endl; exit(1); }
             }
             else if (field_nr == 1) { // SMILES
-                if (fm->database.readTree (tmp_field , tree_nr, tree_id, line_nr)) {
-                    tree_nr++;
-                }
-                else {
-                    cerr << "on line " << line_nr << ", id " << tree_id << "." << endl;
-                }
+                fm->AddCompound (tmp_field , tree_id);
             }
             field_nr++;
         }
-        line_nr++;
     }
 
-    cerr << fm->database.trees.size() << " compounds" << endl;
+//    cerr << fm->database.trees.size() << " compounds" << endl;
     input.close();
 
 }
@@ -127,11 +118,6 @@ void read_act (char* act_file) {
 				else {
                     tid = (Tid) atoi(tmp_field.c_str());
                     if (tid == 0) { cerr << "Error! Invalid ID: '" << tmp_field << "' in file " << act_file << ", line " << line_nr+1 << "." << endl; exit(1); }
-					if (fm->database.trees_map[tid] == NULL) {	// ignore compounds without structures
-						no_id = tmp_field;
-						cerr << "No structure for ID " << tid << ". Ignoring entry!" << endl;
-						break;
-					}
 				}
 			}
 			else if (field_nr == 1) {	// ACTIVITY NAME
@@ -143,8 +129,7 @@ void read_act (char* act_file) {
                 int act_value;
                 str >> act_value;
                 if ((act_value != 0) && act_value != 1) { cerr << "Error! Invalid activity: '" << tmp_field << "' in file " << act_file << ", line " << line_nr+1 << "." << endl; exit(1); }
-                if ((fm->database.trees_map[tid]->activity = (bool) act_value)) { fm->AddChiSqNa();}
-                else { fm->AddChiSqNi();}
+                fm->AddActivity((bool) act_value, tid);
 			}
 			else {
 				cerr << "Error! More than 3 columns at line " << line_nr << "." << endl;
@@ -154,6 +139,15 @@ void read_act (char* act_file) {
 		}
 		line_nr++;
 	}
+
+    /*
+    each (fm->database.trees) {
+        if (fm->database.trees[i]->activity == -1) {
+            cerr << "Error! ID " << fm->database.trees[i]->orig_tid << " is missing activity information." << endl;
+            exit(1);
+        }
+    }
+    */
 
 }
 
@@ -251,7 +245,6 @@ int main(int argc, char *argv[], char *envp) {
         return 1;
     }  
 
-
     fm = new FMiner (type, minfreq, chisq_sig, do_backbone);
     fm->SetDynamicUpperBound(adjust_ub);
     fm->SetPruning(do_pruning);
@@ -265,36 +258,20 @@ int main(int argc, char *argv[], char *envp) {
     
     cerr << "Reading activities..." << endl;
     read_act (act_file);
-    each (fm->database.trees) {
-        if (fm->database.trees[i]->activity == -1) {
-            cerr << "Error! ID " << fm->database.trees[i]->orig_tid << " is missing activity information." << endl;
-            exit(1);
-        }
-    }
 
-    fm->database.edgecount ();
-    fm->database.reorder ();
 
     //////////
     // MINE //
     //////////
     
-    if (!do_pruning || !do_backbone) fm->SetDynamicUpperBound(false); // ensure adjust_ub only for pruning and backbone
 
     cerr << "Mining fragments... (bb: " << do_backbone << ", pr: " << do_pruning << ", adjub: " << adjust_ub << ", chisq sig: " << chisq_sig << ", min freq: " << minfreq << ")" << endl;
-    
-    initLegStatics ();
-    graphstate.init ();
 
     clock_t t1 = clock ();
-    for ( int j = 0; j < (int) fm->database.nodelabels.size (); j++ ) {
-        fm->result.clear();
-        if ( fm->database.nodelabels[j].frequency >= minfreq && fm->database.nodelabels[j].frequentedgelabels.size () ) {
-            Path path(j);
-            path.expand ();
-            each (fm->result) {
-                cout << fm->result[i] << endl;
-            }
+    for ( int j = 0; j < (int) fm->GetNoRootNodes(); j++ ) {
+         vector<string>* result = fm->MineRoot(j);
+         each (*result) {
+            cout << (*result)[i] << endl;
         }
     }
     clock_t t2 = clock ();

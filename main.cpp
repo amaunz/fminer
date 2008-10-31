@@ -87,7 +87,7 @@ void read_smi (char* smi_file) {
         }
     }
 
-//    cerr << fm->database.trees.size() << " compounds" << endl;
+    cerr << fm->GetNoCompounds() << " compounds" << endl;
     input.close();
 
 }

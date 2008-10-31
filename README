@@ -23,20 +23,13 @@ LibFMiner implements a method for efficiently mining relevant tree-shaped molecu
 
 ==Quick Examples:
 
-1) Run:
-./fminer -s data/hamster_male_carcinogenicity.smi -a data/hamster_male_carcinogenicity.class -p0.5 -c > outfile.yaml
+1) Run to mine BBRC representatives:
+./fminer -p0.5 data/hamster_male_carcinogenicity.smi data/hamster_male_carcinogenicity.class > outfile.yaml
 
-2) Run without pruning:
-./fminer -s data/hamster_male_carcinogenicity.smi -a data/hamster_male_carcinogenicity.class -p0.5 -c -x > outfile.pr.yaml
+2) Run to mine BBRC representatives without adjustment of upper bound:
+./fminer -p0.5 -j data/hamster_male_carcinogenicity.smi data/hamster_male_carcinogenicity.class > outfile.yaml
 
-3) Run with free structures:
-./fminer -s data/hamster_male_carcinogenicity.smi -a data/hamster_male_carcinogenicity.class -p0.5 > outfile.yaml
-
-4) Run without adjustment of upper bound and free structures:
-./fminer -s data/hamster_male_carcinogenicity.smi -a data/hamster_male_carcinogenicity.class -p0.5 -j > outfile.yaml
-
-
-1) and 3) should outperform 2) and 4), respectively.
+1) should outperform 2).
 
 
 ==Licensing information:

@@ -17,20 +17,11 @@
  *
  */
 
-#include <openbabel/mol.h>
-#include "openbabel/obconversion.h"
-
 #include <getopt.h>
 #include <time.h>
 #include <iostream>
 #include <string.h>
-#include <sstream>
 
-#include "database.h"
-#include "misc.h"
-#include "legoccurrence.h"
-#include "graphstate.h"
-#include "constraints.h"
 #include "fminer.h"
 
 using namespace std;

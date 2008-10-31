@@ -3,15 +3,15 @@ PROGRAM = fminer
 
 # OPTIONS
 LIBDIR        = ../libfminer
-INCLUDE       = -I$(LIBDIR)/include/openbabel-2.0/
-INCLUDE      += -I$(LIBDIR)
-LDFLAGS       = -L$(LIBDIR)/lib
-LDFLAGS      += -L$(LIBDIR)
+INCLUDE       = -I$(LIBDIR)
+INCLUDE       += -I/usr/local/include/openbabel-2.0/
+
+LDFLAGS       = -L$(LIBDIR)
 
 CC            = g++
 CXXFLAGS      = -g -Wall -O3
 LIBS	      = -lopenbabel -lfminer -lgsl -lgslcblas
-RPATH         = -Wl,-rpath,$(LIBDIR):$(LIBDIR)/lib
+RPATH         = -Wl,-rpath,$(LIBDIR)
 
 # TARGETS
 all: lib $(PROGRAM) 

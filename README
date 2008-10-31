@@ -1,14 +1,11 @@
 =FMiner (A chemical fragment miner)
-Andreas Maunz, 2008.
-FMiner is a chemical fragment miner for anti-monotonic and convex constraints. Currently, minimum frequency and chi-square constraints are supported.
-It is a modified version of Gaston (see below).
+This is the official FMiner application. It depends on LibFMiner (http://github.com/amaunz/libfminer/tree/master). 
+Latest scientific documentation is available from http://github.com/amaunz/fminer-doc/tree/master.
+To create documentation with rdoc, do 'make doc'.
 
+LibFMiner implements a method for efficiently mining relevant tree-shaped molecular fragments, each representing a geometrical classes, with minimum frequency and statistical constraints. Experimental results with four test datasets suggest that the approach is able to optimize correlation with chemical endpoints as well as inter-feature entropy. The mined fragments represent classes of fragments sharing a common core structure (backbone). The proposed method reduces feature set sizes and runtime by >90% and >60% compared to ordinary tree mining. Validation with several publicly available carcinogenicity datasets shows that their expressiveness is comparable to the complete set of tree-shaped fragments and is significantly higher than linear fragments.
 
 ==Switches (run fminer w/o arguments for allowable parameter ranges, defaults and explanations):
-
-===File Switches:
-- -s Smiles file 
-- -a Activity file
 
 ===Constraint parameters:
 - -l Subgraph type, choices are paths and trees.
@@ -21,11 +18,8 @@ It is a modified version of Gaston (see below).
 - -j Deactivate dynamic adjustment of upper bound (less efficient, use only for performance evaluation). Can only be set when -c is not set.
 
 ===Remarks:
-- Structures are output to STDOUT in YAML format, everything else to STDERR.
-- Given an activity file the chi-square test is automatically activated. Output of occurence lists is also activated for each of the two classes.
-- Define equivalence classes for subtrees to avoid redundancy in the solution set. Two trees are equivalent, if one is a subtree of the other. 
+- Structures are output to STDOUT in YAML format.
 - Each line of output is a YAML sequence, containing SMARTS fragment, p-value, and two sequences denoting positive and negative class occurrences (line numbers in Smiles file).
-- Define the FMINER_LAZAR environment variable to produce output in Linfrag format which can be used as input to Lazar.
 
 ==Quick Examples:
 
@@ -46,11 +40,5 @@ It is a modified version of Gaston (see below).
 
 
 ==Licensing information:
-
-FMiner is free software ('free' as in 'freedom', see LICENSE). FMiner uses code from the following projects which are free in the same sense:
-
-===Gaston
-Siegfried Nijssen and Joost Kok. A Quickstart in Frequent Structure Mining Can Make a Difference. Proceedings of the SIGKDD, 2004 (http://www.liacs.nl/home/snijssen/gaston/)
-
-===OpenBabel
-The Open Babel Package, version 2.1.1 http://openbabel.sourceforge.net/ (accessed Jul 2008)
+FMiner is free software ('free' as in 'freedom', see LICENSE).
+Andreas Maunz, 2008.

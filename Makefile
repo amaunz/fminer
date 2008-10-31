@@ -23,6 +23,8 @@ $(PROGRAM): main.cpp
 	      $(LDFLAGS) \
 	      $(RPATH) \
 	      -o $@ $<
+doc: README
+	rdoc
 
 .PHONY:
 clean:

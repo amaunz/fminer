@@ -73,8 +73,10 @@ void read_smi (char* smi_file) {
             }
             else if (field_nr == 1) { // SMILES
                 fm->AddCompound (tmp_field , tree_id);
+
             }
             field_nr++;
+
         }
     }
 
@@ -131,14 +133,6 @@ void read_act (char* act_file) {
 		line_nr++;
 	}
 
-    /*
-    each (fm->database.trees) {
-        if (fm->database.trees[i]->activity == -1) {
-            cerr << "Error! ID " << fm->database.trees[i]->orig_tid << " is missing activity information." << endl;
-            exit(1);
-        }
-    }
-    */
 
 }
 
@@ -236,7 +230,8 @@ int main(int argc, char *argv[], char *envp) {
         return 1;
     }  
 
-    fm = new FMiner (type, minfreq, chisq_sig, do_backbone);
+
+    fm = new FMiner(type, minfreq, chisq_sig, do_backbone);
     fm->SetDynamicUpperBound(adjust_ub);
     fm->SetPruning(do_pruning);
 
@@ -249,7 +244,6 @@ int main(int argc, char *argv[], char *envp) {
     
     cerr << "Reading activities..." << endl;
     read_act (act_file);
-
 
     //////////
     // MINE //
@@ -268,6 +262,5 @@ int main(int argc, char *argv[], char *envp) {
     clock_t t2 = clock ();
     cerr << "Approximate total runtime: " << ( (float) t2 - t1 ) / CLOCKS_PER_SEC << "s" << endl;
 
-    delete fm;
 
 }

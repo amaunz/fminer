@@ -27,7 +27,7 @@
 using namespace std;
 using namespace OpenBabel;
 
-FMiner* fm;
+Fminer* fm;
 
 // helper routines
 void puti ( FILE *f, int i ) {
@@ -231,7 +231,7 @@ int main(int argc, char *argv[], char *envp) {
     }  
 
 
-    fm = new FMiner(type, minfreq, chisq_sig, do_backbone);
+    fm = new Fminer(type, minfreq, chisq_sig, do_backbone);
     fm->SetDynamicUpperBound(adjust_ub);
     fm->SetPruning(do_pruning);
 
@@ -262,5 +262,6 @@ int main(int argc, char *argv[], char *envp) {
     clock_t t2 = clock ();
     cerr << "Approximate total runtime: " << ( (float) t2 - t1 ) / CLOCKS_PER_SEC << "s" << endl;
 
+    delete fm;
 
 }

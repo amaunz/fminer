@@ -193,6 +193,7 @@ int main(int argc, char *argv[], char *envp) {
             break;
         case 'c':
             do_backbone = false;
+            adjust_ub = false;
             break;
         case 'x':
             do_pruning = false;

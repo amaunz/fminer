@@ -235,6 +235,7 @@ int main(int argc, char *argv[], char *envp) {
     fm = new Fminer(type, minfreq, chisq_sig, do_backbone);
     fm->SetDynamicUpperBound(adjust_ub);
     fm->SetPruning(do_pruning);
+    fm->SetConsoleOut(true);
 
     //////////
     // READ //

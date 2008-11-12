@@ -50,6 +50,27 @@ void remove_dos_cr(string* str) {
 	for (string::size_type i = str->find(nl); i!=string::npos; i=str->find(nl)) str->erase(i,1); // erase dos cr
 }
 
+/*
+void read_gsp (FILE *input) 
+  Tid tid;
+  Tid tid2 = 0; 
+
+  char array[100];
+  fgets ( array, 100, input );
+
+  while ( !feof ( input ) ) {
+    readTree ( input, tid2 );
+    fgets ( array, 100, input );
+    tid2++;
+  }
+}
+*/
+
+void read_gsp (char* gsp_file) {
+    FILE *input = fopen (gsp_file, "r");
+    fm->ReadGsp(input);
+}
+
 void read_smi (char* smi_file) {
     Tid tree_id = 0;
 
@@ -153,6 +174,7 @@ int main(int argc, char *argv[], char *envp) {
     int status=1;
     char* smi_file = NULL;
     char* act_file = NULL;
+    char* gsp_file = NULL;
 
     bool adjust_ub = true;
     bool do_pruning = true;
@@ -169,7 +191,28 @@ int main(int argc, char *argv[], char *envp) {
            }
        }
        else {
-            status=1;
+           if (argv[argc-1][0]=='-') {
+               status=1;
+           }
+           else {
+               gsp_file = argv[argc-1]; //chisq.active=0;
+               adjust_ub = false;
+               do_pruning = false;
+               do_backbone = false;
+               status = 0;
+           }
+       }
+    }
+    else if (argc==2){
+       if (argv[argc-1][0]=='-') {
+           status=1;
+       }
+       else {
+           gsp_file = argv[argc-1]; //chisq.active=0;
+           adjust_ub = false;
+           do_pruning = false;
+           do_backbone = false;
+           status = 0;
        }
     }
     else status=1;
@@ -181,7 +224,7 @@ int main(int argc, char *argv[], char *envp) {
         case 'p':
             chisq_sig = atof (optarg);
             if (chisq_sig < 0.0 || chisq_sig > 1.0) { cerr << "Error! Invalid value '" << chisq_sig << "' for parameter p." << endl; status = 2; }
-            if (!act_file) status = 2;
+            if (gsp_file) status = 2;
             break;
         case 'l':
             type = atoi (optarg);
@@ -194,12 +237,15 @@ int main(int argc, char *argv[], char *envp) {
         case 'c':
             do_backbone = false;
             adjust_ub = false;
+            if (gsp_file) status = 2;
             break;
         case 'x':
             do_pruning = false;
+            if (gsp_file) status = 2;
             break;
         case 'j':
             adjust_ub = false;
+            if (gsp_file) status = 2;
             if (!do_backbone) status = 2;
             if (!do_pruning) status = 2;
             break;
@@ -212,7 +258,8 @@ int main(int argc, char *argv[], char *envp) {
     }
 
     if (status > 0) {
-        cerr << "fminer: usage: fminer [-f minfreq] [-l type] [-p p_value] [ [-x] [-c] | [-j] ] [-h] smiles_file activities_file" << endl;
+        cerr << "fminer usage: fminer [-f minfreq] [-l type] [-p p_value] [ [-x] [-c] | [-j] ] smiles_file activities_file" << endl;
+        cerr << "              fminer [-f minfreq] [-l type] gspan_file" << endl;
     }
     if (status==1) {
         cerr << "               use '-h' for additional information." << endl;
@@ -232,20 +279,35 @@ int main(int argc, char *argv[], char *envp) {
     }  
 
 
-    fm = new Fminer(type, minfreq, chisq_sig, do_backbone);
-    fm->SetDynamicUpperBound(adjust_ub);
-    fm->SetPruning(do_pruning);
+    if (smi_file && act_file) {
+        fm = new Fminer(type, minfreq, chisq_sig, do_backbone);
+        fm->SetDynamicUpperBound(adjust_ub);
+        fm->SetPruning(do_pruning);
+    }
+    else if (gsp_file) {
+        fm = new Fminer(type, minfreq);
+        fm->SetChisqActive(false);
+    }
+    else {
+        exit(1);
+    }
     fm->SetConsoleOut(true);
+
 
     //////////
     // READ //
     //////////
 
-    cerr << "Reading compounds..." << endl;
-    read_smi (smi_file);
+    if (smi_file && act_file) {
+        cerr << "Reading compounds..." << endl;
+        read_smi (smi_file);
+        cerr << "Reading activities..." << endl;
+        read_act (act_file);
+    }
     
-    cerr << "Reading activities..." << endl;
-    read_act (act_file);
+    else if (gsp_file) {
+        read_gsp(gsp_file);
+    }
 
     //////////
     // MINE //

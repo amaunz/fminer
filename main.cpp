@@ -27,6 +27,8 @@
 using namespace std;
 using namespace OpenBabel;
 
+extern Statistics* statistics;
+
 Fminer* fm;
 
 // helper routines
@@ -49,22 +51,6 @@ void remove_dos_cr(string* str) {
 	string nl = "\r"; 
 	for (string::size_type i = str->find(nl); i!=string::npos; i=str->find(nl)) str->erase(i,1); // erase dos cr
 }
-
-/*
-void read_gsp (FILE *input) 
-  Tid tid;
-  Tid tid2 = 0; 
-
-  char array[100];
-  fgets ( array, 100, input );
-
-  while ( !feof ( input ) ) {
-    readTree ( input, tid2 );
-    fgets ( array, 100, input );
-    tid2++;
-  }
-}
-*/
 
 void read_gsp (char* gsp_file) {
     FILE *input = fopen (gsp_file, "r");
@@ -176,10 +162,15 @@ int main(int argc, char *argv[], char *envp) {
     char* act_file = NULL;
     char* gsp_file = NULL;
 
+    bool refine_singles = false;
+    bool aromatic = true;
     bool adjust_ub = true;
     bool do_pruning = true;
     bool do_backbone = true;
 
+
+
+    // FILE ARGUMENT READ
     if (argc>2) {
        if (argv[argc-2][0]!='-') {
            smi_file = argv[argc-2]; status=0;
@@ -195,11 +186,11 @@ int main(int argc, char *argv[], char *envp) {
                status=1;
            }
            else {
-               gsp_file = argv[argc-1]; //chisq.active=0;
-               adjust_ub = false;
-               do_pruning = false;
-               do_backbone = false;
-               status = 0;
+              gsp_file = argv[argc-1]; //chisq.active=0;
+//              adjust_ub = false;
+//              do_pruning = false;
+//              do_backbone = false;
+              status = 0;
            }
        }
     }
@@ -209,17 +200,19 @@ int main(int argc, char *argv[], char *envp) {
        }
        else {
            gsp_file = argv[argc-1]; //chisq.active=0;
-           adjust_ub = false;
-           do_pruning = false;
-           do_backbone = false;
+//           adjust_ub = false;
+//           do_pruning = false;
+//           do_backbone = false;
            status = 0;
        }
     }
     else status=1;
 
-    char c;
 
-    while ((c = getopt(argc, argv, "p:l:f:cxjh")) != -1) {
+    
+    // OPTIONS ARGUMENT READ
+    char c;
+    while ((c = getopt(argc, argv, "p:l:f:cxjhas")) != -1) {
         switch(c) {
         case 'p':
             chisq_sig = atof (optarg);
@@ -249,17 +242,25 @@ int main(int argc, char *argv[], char *envp) {
             if (!do_backbone) status = 2;
             if (!do_pruning) status = 2;
             break;
+       case 'a':
+            aromatic = false;
+            if (!smi_file) status = 2;
+            break;
+       case 's':
+            refine_singles = true;
+            break;
        case 'h':
             status=2;
             break;
-
-        default: abort();
+       default: abort();
         }
     }
 
+
+    // INTEGRITY CONSTRAINTS AND HELP OUTPUT
     if (status > 0) {
-        cerr << "fminer usage: fminer [-f minfreq] [-l type] [-p p_value] [ [-x] [-c] | [-j] ] smiles_file activities_file" << endl;
-        cerr << "              fminer [-f minfreq] [-l type] gspan_file" << endl;
+        cerr << "fminer usage: fminer [-f minfreq] [-l type] [-s] [-a] [-p p_value] [ [-x] [-c] | [-j] ] smiles_file activities_file" << endl;
+        cerr << "              fminer [-f minfreq] [-l type] [-s] gspan_file" << endl;
     }
     if (status==1) {
         cerr << "               use '-h' for additional information." << endl;
@@ -272,6 +273,8 @@ int main(int argc, char *argv[], char *envp) {
         cerr << "       -x Switch off upper bound pruning (less efficient, use only for performance evaluation)." << endl;
         cerr << "       -c Switch off backbone mining." << endl;
         cerr << "       -j Switch off dynamic adjustment of upper bound for backbone mining (less efficient, use only for performance evaluation). Implied by both -x or -c." << endl;
+        cerr << "       -s Switch on refinement of fragments with frequency 1 (default: off)." << endl;
+        cerr << "       -a Switch off aromatic ring perception when using smiles input format (default: on)." << endl;
         cerr << endl;
         cerr << "See README for additional information." << endl;
         cerr << endl;
@@ -279,7 +282,9 @@ int main(int argc, char *argv[], char *envp) {
     }  
 
 
-    if (smi_file && act_file) {
+
+    // DEFAULT SETTINGS FOR THIS HOST APP
+   if (smi_file && act_file) {
         fm = new Fminer(type, minfreq, chisq_sig, do_backbone);
         fm->SetDynamicUpperBound(adjust_ub);
         fm->SetPruning(do_pruning);
@@ -287,13 +292,20 @@ int main(int argc, char *argv[], char *envp) {
     else if (gsp_file) {
         fm = new Fminer(type, minfreq);
         fm->SetChisqActive(false);
+        fm->SetDynamicUpperBound(false);
+        fm->SetPruning(false);
+        fm->SetBackbone(false);
+ 
     }
     else {
         exit(1);
     }
+    fm->SetAromatic(aromatic);
+    fm->SetRefineSingles(refine_singles);
     fm->SetConsoleOut(true);
+ 
 
-
+    
     //////////
     // READ //
     //////////
@@ -324,6 +336,7 @@ int main(int argc, char *argv[], char *envp) {
         }
     }
     clock_t t2 = clock ();
+    statistics->print();
     cerr << "Approximate total runtime: " << ( (float) t2 - t1 ) / CLOCKS_PER_SEC << "s" << endl;
 
     delete fm;

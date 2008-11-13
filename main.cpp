@@ -187,9 +187,6 @@ int main(int argc, char *argv[], char *envp) {
            }
            else {
               gsp_file = argv[argc-1]; //chisq.active=0;
-//              adjust_ub = false;
-//              do_pruning = false;
-//              do_backbone = false;
               status = 0;
            }
        }
@@ -200,9 +197,6 @@ int main(int argc, char *argv[], char *envp) {
        }
        else {
            gsp_file = argv[argc-1]; //chisq.active=0;
-//           adjust_ub = false;
-//           do_pruning = false;
-//           do_backbone = false;
            status = 0;
        }
     }
@@ -214,40 +208,34 @@ int main(int argc, char *argv[], char *envp) {
     char c;
     while ((c = getopt(argc, argv, "p:l:f:cxjhas")) != -1) {
         switch(c) {
-        case 'p':
-            chisq_sig = atof (optarg);
-            if (chisq_sig < 0.0 || chisq_sig > 1.0) { cerr << "Error! Invalid value '" << chisq_sig << "' for parameter p." << endl; status = 2; }
-            if (gsp_file) status = 2;
+        case 'f':
+            minfreq = atoi(optarg);
             break;
         case 'l':
             type = atoi (optarg);
-            if ((type != 1) && (type != 2)) { cerr << "Error! Invalid value '" << type << "' for parameter l." << endl; status = 2; }
             break;
-        case 'f':
-            minfreq = atoi(optarg);
-            if (minfreq < 1) { cerr << "Error! Invalid value '" << minfreq << "' for parameter f." << endl; status = 2; }
+        case 's':
+            refine_singles = true;
             break;
-        case 'c':
-            do_backbone = false;
-            adjust_ub = false;
-            if (gsp_file) status = 2;
+        case 'a':
+            aromatic = false;
+            if (!smi_file) status = 1;
+            break;
+        case 'p':
+            chisq_sig = atof (optarg);
+            if (gsp_file) status = 1;
             break;
         case 'x':
             do_pruning = false;
-            if (gsp_file) status = 2;
+            if (gsp_file) status = 1;
             break;
-        case 'j':
+        case 'c':
+            do_backbone = false;
+            if (gsp_file) status = 1;
+            break;
+       case 'j':
             adjust_ub = false;
-            if (gsp_file) status = 2;
-            if (!do_backbone) status = 2;
-            if (!do_pruning) status = 2;
-            break;
-       case 'a':
-            aromatic = false;
-            if (!smi_file) status = 2;
-            break;
-       case 's':
-            refine_singles = true;
+            if (gsp_file) status = 1;
             break;
        case 'h':
             status=2;
@@ -258,8 +246,11 @@ int main(int argc, char *argv[], char *envp) {
 
 
     // INTEGRITY CONSTRAINTS AND HELP OUTPUT
+    if ((!do_pruning && !do_backbone) || (!do_backbone && !adjust_ub) || (!adjust_ub) && (!do_pruning)) status = 1;
+
+
     if (status > 0) {
-        cerr << "fminer usage: fminer [-f minfreq] [-l type] [-s] [-a] [-p p_value] [ [-x] [-c] | [-j] ] smiles_file activities_file" << endl;
+        cerr << "fminer usage: fminer [-f minfreq] [-l type] [-s] [-a] [-p p_value] [ -x | -c | -j ] smiles_file activities_file" << endl;
         cerr << "              fminer [-f minfreq] [-l type] [-s] gspan_file" << endl;
     }
     if (status==1) {
@@ -325,18 +316,20 @@ int main(int argc, char *argv[], char *envp) {
     // MINE //
     //////////
     
-
-    cerr << "Mining fragments... (bb: " << do_backbone << ", pr: " << do_pruning << ", adjub: " << adjust_ub << ", chisq sig: " << chisq_sig << ", min freq: " << minfreq << ")" << endl;
+    if (!gsp_file) cerr << "Mining fragments... (bb: " << do_backbone << ", pr: " << do_pruning << ", adjub: " << adjust_ub << ", chisq sig: " << chisq_sig << ", min freq: " << minfreq << ", type: " << type << ")" << endl;
+    else cerr << "Mining fragments... (min freq: " << minfreq << ", type" << type << ")" << endl;
 
     clock_t t1 = clock ();
     for ( int j = 0; j < (int) fm->GetNoRootNodes(); j++ ) {
-         vector<string>* result = fm->MineRoot(j);
-         each (*result) {
-            cout << (*result)[i] << endl;
+        vector<string>* result = fm->MineRoot(j);
+        if (!fm->GetConsoleOut()) { 
+            each (*result) {
+                cout << (*result)[i] << endl;
+            }
         }
     }
     clock_t t2 = clock ();
-    statistics->print();
+    if (gsp_file) statistics->print();
     cerr << "Approximate total runtime: " << ( (float) t2 - t1 ) / CLOCKS_PER_SEC << "s" << endl;
 
     delete fm;

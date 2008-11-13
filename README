@@ -21,17 +21,6 @@ LibFMiner implements a method for efficiently mining relevant tree-shaped molecu
 - Structures are output to STDOUT in YAML format.
 - Each line of output is a YAML sequence, containing SMARTS fragment, p-value, and two sequences denoting positive and negative class occurrences (line numbers in Smiles file).
 
-==Quick Examples:
-
-1) Run to mine BBRC representatives:
-./fminer -p0.5 data/hamster_male_carcinogenicity.smi data/hamster_male_carcinogenicity.class > outfile.yaml
-
-2) Run to mine BBRC representatives without adjustment of upper bound:
-./fminer -p0.5 -j data/hamster_male_carcinogenicity.smi data/hamster_male_carcinogenicity.class > outfile.yaml
-
-1) should outperform 2).
-
-
 ==Licensing information:
 FMiner is free software ('free' as in 'freedom', see LICENSE).
 Andreas Maunz, 2008.

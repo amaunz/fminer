@@ -246,11 +246,10 @@ int main(int argc, char *argv[], char *envp) {
 
 
     // INTEGRITY CONSTRAINTS AND HELP OUTPUT
-    if ((!do_pruning && !do_backbone) || (!do_backbone && !adjust_ub) || (!adjust_ub) && (!do_pruning)) status = 1;
-
+    if ((adjust_ub && !do_pruning) || (!do_backbone && adjust_ub)) status = 1;
 
     if (status > 0) {
-        cerr << "fminer usage: fminer [-f minfreq] [-l type] [-s] [-a] [-p p_value] [ -x | -c | -j ] smiles_file activities_file" << endl;
+        cerr << "fminer usage: fminer [-f minfreq] [-l type] [-s] [-a] [-j [-c|-x]] [-p p_value] smiles_file activities_file" << endl;
         cerr << "              fminer [-f minfreq] [-l type] [-s] gspan_file" << endl;
     }
     if (status==1) {
@@ -260,12 +259,12 @@ int main(int argc, char *argv[], char *envp) {
     if (status > 1) {
         cerr << "       -f Set minimum frequency. Allowable values for _minfreq_: 1, 2, ... Default is " << def_minfreq<< "." << endl;
         cerr << "       -l Set fragment type. Allowable values for _type_: 1 (paths) and 2 (trees). Default is " << def_type << "." << endl;
-        cerr << "       -p Set significance type. Allowable values for _p_value_: 0 <= p_value <= 1.0. Default is " << def_chisq << "." << endl;
-        cerr << "       -x Switch off upper bound pruning (less efficient, use only for performance evaluation)." << endl;
-        cerr << "       -c Switch off backbone mining." << endl;
-        cerr << "       -j Switch off dynamic adjustment of upper bound for backbone mining (less efficient, use only for performance evaluation). Implied by both -x or -c." << endl;
         cerr << "       -s Switch on refinement of fragments with frequency 1 (default: off)." << endl;
         cerr << "       -a Switch off aromatic ring perception when using smiles input format (default: on)." << endl;
+        cerr << "       -j Switch off dynamic adjustment of upper bound for backbone mining (less efficient, use only for performance evaluation). Implied by both -x or -c." << endl;
+        cerr << "       -x Switch off statistical upper bound pruning (less efficient, use only for performance evaluation)." << endl;
+        cerr << "       -c Switch off backbone mining." << endl;
+        cerr << "       -p Set significance type. Allowable values for _p_value_: 0 <= p_value <= 1.0. Default is " << def_chisq << "." << endl;
         cerr << endl;
         cerr << "See README for additional information." << endl;
         cerr << endl;
@@ -283,10 +282,6 @@ int main(int argc, char *argv[], char *envp) {
     else if (gsp_file) {
         fm = new Fminer(type, minfreq);
         fm->SetChisqActive(false);
-        fm->SetDynamicUpperBound(false);
-        fm->SetPruning(false);
-        fm->SetBackbone(false);
- 
     }
     else {
         exit(1);

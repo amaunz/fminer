@@ -52,21 +52,21 @@ void remove_dos_cr(string* str) {
 	for (string::size_type i = str->find(nl); i!=string::npos; i=str->find(nl)) str->erase(i,1); // erase dos cr
 }
 
-void read_gsp (char* gsp_file) {
-    FILE *input = fopen (gsp_file, "r");
+void read_gsp (char* graph_file) {
+    FILE *input = fopen (graph_file, "r");
     fm->ReadGsp(input);
 }
 
-void read_smi (char* smi_file) {
+void read_smi (char* graph_file) {
     Tid tree_id = 0;
 
     ifstream input;
     string line;
     string tmp_field;
-    input.open(smi_file);
+    input.open(graph_file);
 
     if (!input) {
-        cerr << "Cannot open " << smi_file << endl;
+        cerr << "Cannot open " << graph_file << endl;
         exit(1);
     }
 
@@ -158,9 +158,8 @@ int main(int argc, char *argv[], char *envp) {
     int type = def_type;
     
     int status=1;
-    char* smi_file = NULL;
+    char* graph_file = NULL;
     char* act_file = NULL;
-    char* gsp_file = NULL;
 
     bool refine_singles = false;
     bool aromatic = true;
@@ -173,7 +172,7 @@ int main(int argc, char *argv[], char *envp) {
     // FILE ARGUMENT READ
     if (argc>2) {
        if (argv[argc-2][0]!='-') {
-           smi_file = argv[argc-2]; status=0;
+           graph_file = argv[argc-2]; status=0;
            if (argv[argc-1][0]=='-') {
                status=1;
            }
@@ -186,7 +185,7 @@ int main(int argc, char *argv[], char *envp) {
                status=1;
            }
            else {
-              gsp_file = argv[argc-1]; //chisq.active=0;
+              graph_file = argv[argc-1]; //chisq.active=0;
               status = 0;
            }
        }
@@ -196,17 +195,16 @@ int main(int argc, char *argv[], char *envp) {
            status=1;
        }
        else {
-           gsp_file = argv[argc-1]; //chisq.active=0;
+           graph_file = argv[argc-1]; //chisq.active=0;
            status = 0;
        }
     }
     else status=1;
 
-
     
     // OPTIONS ARGUMENT READ
     char c;
-    while ((c = getopt(argc, argv, "p:l:f:cxjhas")) != -1) {
+    while ((c = getopt(argc, argv, "f:l:p:saubdh")) != -1) {
         switch(c) {
         case 'f':
             minfreq = atoi(optarg);
@@ -219,23 +217,23 @@ int main(int argc, char *argv[], char *envp) {
             break;
         case 'a':
             aromatic = false;
-            if (!smi_file) status = 1;
+            if (!graph_file) status = 1;
             break;
         case 'p':
             chisq_sig = atof (optarg);
-            if (gsp_file) status = 1;
+            if (!act_file) status = 1;
             break;
-        case 'x':
+        case 'u':
             do_pruning = false;
-            if (gsp_file) status = 1;
+            if (!act_file) status = 1;
             break;
-        case 'c':
+        case 'b':
             do_backbone = false;
-            if (gsp_file) status = 1;
+            if (!act_file) status = 1;
             break;
-       case 'j':
+       case 'd':
             adjust_ub = false;
-            if (gsp_file) status = 1;
+            if (!act_file) status = 1;
             break;
        case 'h':
             status=2;
@@ -248,23 +246,36 @@ int main(int argc, char *argv[], char *envp) {
     // INTEGRITY CONSTRAINTS AND HELP OUTPUT
     if ((adjust_ub && !do_pruning) || (!do_backbone && adjust_ub)) status = 1;
 
+    bool input_smi = false, input_gsp = false;
+    string graph_file_str = graph_file;
+    string graph_file_suffix = graph_file_str.substr(graph_file_str.find_last_of("."));
+    if (graph_file_suffix == ".smi") { input_smi=true; }
+    else if (graph_file_suffix == ".gsp") { input_gsp=true; }
+    else status=2;
+
     if (status > 0) {
-        cerr << "fminer usage: fminer [-f minfreq] [-l type] [-s] [-a] [-j [-c|-x]] [-p p_value] smiles_file activities_file" << endl;
-        cerr << "              fminer [-f minfreq] [-l type] [-s] gspan_file" << endl;
+        cerr << "usage: fminer [-f minfreq] [-l type] [-s] [-a] [-d [-b|-u]] [-p p_value] <graphs> <activities>" << endl;
+        cerr << "       fminer [-f minfreq] [-l type] [-s] <graphs>" << endl;
     }
     if (status==1) {
         cerr << "               use '-h' for additional information." << endl;
         return 1;
     }
     if (status > 1) {
-        cerr << "       -f Set minimum frequency. Allowable values for _minfreq_: 1, 2, ... Default is " << def_minfreq<< "." << endl;
-        cerr << "       -l Set fragment type. Allowable values for _type_: 1 (paths) and 2 (trees). Default is " << def_type << "." << endl;
+        cerr << " File formats:" << endl;
+        cerr << "       <graphs> File must either have suffix .smi or .gsp, indicating SMILES or gSpan format." << endl;
+        cerr << "       <activities> File must be in Activity format (suffix not relevant)." << endl;
+        cerr << " General options:" << endl;
+        cerr << "       -f Set minimum frequency. Allowable values for _minfreq_: 1, 2, ... (default: " << def_minfreq<< ")." << endl;
+        cerr << "       -l Set fragment type. Allowable values for _type_: 1 (paths) and 2 (trees) (default: " << def_type << ")." << endl;
         cerr << "       -s Switch on refinement of fragments with frequency 1 (default: off)." << endl;
+        cerr << endl;
+        cerr << " Upper bound pruning option:" << endl;
         cerr << "       -a Switch off aromatic ring perception when using smiles input format (default: on)." << endl;
-        cerr << "       -j Switch off dynamic adjustment of upper bound for backbone mining (less efficient, use only for performance evaluation). Implied by both -x or -c." << endl;
-        cerr << "       -x Switch off statistical upper bound pruning (less efficient, use only for performance evaluation)." << endl;
-        cerr << "       -c Switch off backbone mining." << endl;
-        cerr << "       -p Set significance type. Allowable values for _p_value_: 0 <= p_value <= 1.0. Default is " << def_chisq << "." << endl;
+        cerr << "       -d Switch off dynamic adjustment of upper bound for backbone mining (default: on)." << endl;
+        cerr << "       -b Switch off mining for backbone refinement classes (default: on)." << endl;
+        cerr << "       -u Switch off upper bound pruning (default: on)." << endl;
+        cerr << "       -p Set significance type. Allowable values for _p_value_: 0 <= p_value <= 1.0 (default: " << def_chisq << ")." << endl;
         cerr << endl;
         cerr << "See README for additional information." << endl;
         cerr << endl;
@@ -274,12 +285,12 @@ int main(int argc, char *argv[], char *envp) {
 
 
     // DEFAULT SETTINGS FOR THIS HOST APP
-   if (smi_file && act_file) {
+   if (graph_file && act_file) {
         fm = new Fminer(type, minfreq, chisq_sig, do_backbone);
         fm->SetDynamicUpperBound(adjust_ub);
         fm->SetPruning(do_pruning);
     }
-    else if (gsp_file) {
+    else if (graph_file) {
         fm = new Fminer(type, minfreq);
         fm->SetChisqActive(false);
     }
@@ -296,22 +307,23 @@ int main(int argc, char *argv[], char *envp) {
     // READ //
     //////////
 
-    if (smi_file && act_file) {
+    if (graph_file && act_file) {
         cerr << "Reading compounds..." << endl;
-        read_smi (smi_file);
+        if (input_smi) read_smi (graph_file);
+        else if (input_gsp) read_gsp (graph_file);
         cerr << "Reading activities..." << endl;
         read_act (act_file);
     }
     
-    else if (gsp_file) {
-        read_gsp(gsp_file);
+    else if (graph_file) {
+        read_gsp(graph_file);
     }
 
     //////////
     // MINE //
     //////////
     
-    if (!gsp_file) cerr << "Mining fragments... (bb: " << do_backbone << ", pr: " << do_pruning << ", adjub: " << adjust_ub << ", chisq sig: " << chisq_sig << ", min freq: " << minfreq << ", type: " << type << ")" << endl;
+    if (!graph_file) cerr << "Mining fragments... (bb: " << do_backbone << ", pr: " << do_pruning << ", adjub: " << adjust_ub << ", chisq sig: " << chisq_sig << ", min freq: " << minfreq << ", type: " << type << ")" << endl;
     else cerr << "Mining fragments... (min freq: " << minfreq << ", type" << type << ")" << endl;
 
     clock_t t1 = clock ();
@@ -324,7 +336,7 @@ int main(int argc, char *argv[], char *envp) {
         }
     }
     clock_t t2 = clock ();
-    if (gsp_file) statistics->print();
+    if (!fm->GetBackbone()) statistics->print();
     cerr << "Approximate total runtime: " << ( (float) t2 - t1 ) / CLOCKS_PER_SEC << "s" << endl;
 
     delete fm;

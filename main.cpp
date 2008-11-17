@@ -86,7 +86,6 @@ void read_smi (char* graph_file) {
 
         }
     }
-
     cerr << fm->GetNoCompounds() << " compounds" << endl;
     input.close();
 
@@ -319,14 +318,16 @@ int main(int argc, char *argv[], char *envp) {
     }
     
     else if (graph_file) {
-        read_gsp(graph_file);
+        cerr << "Reading compounds..." << endl;
+        if (input_smi) read_smi(graph_file);
+        else if (input_gsp) read_gsp(graph_file);
     }
 
     //////////
     // MINE //
     //////////
     
-    if (!graph_file) cerr << "Mining fragments... (bb: " << do_backbone << ", pr: " << do_pruning << ", adjub: " << adjust_ub << ", chisq sig: " << chisq_sig << ", min freq: " << minfreq << ", type: " << type << ")" << endl;
+    if (act_file) cerr << "Mining fragments... (bb: " << do_backbone << ", pr: " << do_pruning << ", adjub: " << adjust_ub << ", chisq sig: " << chisq_sig << ", min freq: " << minfreq << ", type: " << type << ")" << endl;
     else cerr << "Mining fragments... (min freq: " << minfreq << ", type" << type << ")" << endl;
 
     clock_t t1 = clock ();

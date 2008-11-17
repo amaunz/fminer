@@ -247,11 +247,14 @@ int main(int argc, char *argv[], char *envp) {
     if ((adjust_ub && !do_pruning) || (!do_backbone && adjust_ub)) status = 1;
 
     bool input_smi = false, input_gsp = false;
-    string graph_file_str = graph_file;
-    string graph_file_suffix = graph_file_str.substr(graph_file_str.find_last_of("."));
-    if (graph_file_suffix == ".smi") { input_smi=true; }
-    else if (graph_file_suffix == ".gsp") { input_gsp=true; }
-    else status=2;
+    string graph_file_str;
+    if (graph_file) {
+        graph_file_str = graph_file;
+        string graph_file_suffix = graph_file_str.substr(graph_file_str.find_last_of("."));
+        if (graph_file_suffix == ".smi") { input_smi=true; }
+        else if (graph_file_suffix == ".gsp") { input_gsp=true; }
+        else status=2;
+    }
 
     if (status > 0) {
         cerr << "usage: fminer [-f minfreq] [-l type] [-s] [-a] [-d [-b|-u]] [-p p_value] <graphs> <activities>" << endl;

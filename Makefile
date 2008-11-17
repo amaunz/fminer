@@ -25,5 +25,9 @@ $(PROGRAM): main.cpp
 	      -o $@ $<
 
 .PHONY:
+doc: README
+	rdoc $<
+
+.PHONY:
 clean:
-	-rm -rf $(PROGRAM) 
+	-rm -rf $(PROGRAM) doc

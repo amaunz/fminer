@@ -160,6 +160,7 @@ int main(int argc, char *argv[], char *envp) {
     char* graph_file = NULL;
     char* act_file = NULL;
 
+    bool do_output = true;
     bool refine_singles = false;
     bool aromatic = true;
     bool adjust_ub = true;
@@ -203,7 +204,7 @@ int main(int argc, char *argv[], char *envp) {
     
     // OPTIONS ARGUMENT READ
     char c;
-    while ((c = getopt(argc, argv, "f:l:p:saubdh")) != -1) {
+    while ((c = getopt(argc, argv, "f:l:p:saubdoh")) != -1) {
         switch(c) {
         case 'f':
             minfreq = atoi(optarg);
@@ -234,6 +235,9 @@ int main(int argc, char *argv[], char *envp) {
             adjust_ub = false;
             if (!act_file) status = 1;
             break;
+       case 'o':
+            do_output = false;
+            break;
        case 'h':
             status=2;
             break;
@@ -256,8 +260,8 @@ int main(int argc, char *argv[], char *envp) {
     }
 
     if (status > 0) {
-        cerr << "usage: fminer [-f minfreq] [-l type] [-s] [-a] [-d [-b|-u]] [-p p_value] <graphs> <activities>" << endl;
-        cerr << "       fminer [-f minfreq] [-l type] [-s] <graphs>" << endl;
+        cerr << "usage: fminer [-f minfreq] [-l type] [-s] [-a] [-o] [-d [-b|-u]] [-p p_value] <graphs> <activities>" << endl;
+        cerr << "       fminer [-f minfreq] [-l type] [-s] [-o] <graphs>" << endl;
     }
     if (status==1) {
         cerr << "               use '-h' for additional information." << endl;
@@ -271,8 +275,9 @@ int main(int argc, char *argv[], char *envp) {
         cerr << "       -f Set minimum frequency. Allowable values for _minfreq_: 1, 2, ... (default: " << def_minfreq<< ")." << endl;
         cerr << "       -l Set fragment type. Allowable values for _type_: 1 (paths) and 2 (trees) (default: " << def_type << ")." << endl;
         cerr << "       -s Switch on refinement of fragments with frequency 1 (default: off)." << endl;
+        cerr << "       -o Switch off output (default: on)." << endl;
         cerr << endl;
-        cerr << " Upper bound pruning option:" << endl;
+        cerr << " Upper bound pruning options:" << endl;
         cerr << "       -a Switch off aromatic ring perception when using smiles input format (default: on)." << endl;
         cerr << "       -d Switch off dynamic adjustment of upper bound for backbone mining (default: on)." << endl;
         cerr << "       -b Switch off mining for backbone refinement classes (default: on)." << endl;
@@ -302,7 +307,7 @@ int main(int argc, char *argv[], char *envp) {
     fm->SetAromatic(aromatic);
     fm->SetRefineSingles(refine_singles);
     fm->SetConsoleOut(true);
- 
+    fm->SetDoOutput(do_output);
 
     
     //////////
@@ -328,7 +333,7 @@ int main(int argc, char *argv[], char *envp) {
     //////////
     
     if (act_file) cerr << "Mining fragments... (bb: " << do_backbone << ", pr: " << do_pruning << ", adjub: " << adjust_ub << ", chisq sig: " << chisq_sig << ", min freq: " << minfreq << ", type: " << type << ")" << endl;
-    else cerr << "Mining fragments... (min freq: " << minfreq << ", type" << type << ")" << endl;
+    else cerr << "Mining fragments... (min freq: " << minfreq << ", type: " << type << ")" << endl;
 
     clock_t t1 = clock ();
     for ( int j = 0; j < (int) fm->GetNoRootNodes(); j++ ) {

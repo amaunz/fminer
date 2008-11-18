@@ -335,7 +335,7 @@ int main(int argc, char *argv[], char *envp) {
         vector<string>* result = fm->MineRoot(j);
         if (!fm->GetConsoleOut()) { 
             each (*result) {
-                cout << (*result)[i] << endl;
+                cout << (*result)[i];
             }
         }
     }

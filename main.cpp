@@ -256,7 +256,7 @@ int main(int argc, char *argv[], char *envp) {
         string graph_file_suffix = graph_file_str.substr(graph_file_str.find_last_of("."));
         if (graph_file_suffix == ".smi") { input_smi=true; }
         else if (graph_file_suffix == ".gsp") { input_gsp=true; }
-        else status=2;
+        else { cerr << "Suffix " << graph_file_suffix << " unknown!" << endl; status=2;}
     }
 
     if (status > 0) {

@@ -21,6 +21,7 @@
 #include <time.h>
 #include <iostream>
 #include <string.h>
+#include <cassert>
 
 #include "fminer.h"
 
@@ -54,6 +55,10 @@ void remove_dos_cr(string* str) {
 
 void read_gsp (char* graph_file) {
     FILE *input = fopen (graph_file, "r");
+    if (!input) {
+        cerr << "Error opening file '" << graph_file << "': " << strerror(errno) << "." << endl;
+        exit(1);
+    }
     fm->ReadGsp(input);
 }
 
@@ -64,9 +69,9 @@ void read_smi (char* graph_file) {
     string line;
     string tmp_field;
     input.open(graph_file);
-
+    
     if (!input) {
-        cerr << "Cannot open " << graph_file << endl;
+        cerr << "Error opening file '" << graph_file << "': " << strerror(errno) << "." << endl;
         exit(1);
     }
 
@@ -102,7 +107,7 @@ void read_act (char* act_file) {
     
     input.open(act_file);
     if (!input) {
-        cerr << "Cannot open " << act_file << endl;
+        cerr << "Error opening file '" << act_file << "': " << strerror(errno) << "." << endl;
         exit(1);
     }
 

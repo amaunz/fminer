@@ -146,6 +146,7 @@ void read_act (char* act_file) {
 // main
 int main(int argc, char *argv[], char *envp) {
 
+    const char* program_name = argv[0];
 
     float def_chisq = 0.95;
     float chisq_sig = def_chisq;
@@ -204,7 +205,21 @@ int main(int argc, char *argv[], char *envp) {
     
     // OPTIONS ARGUMENT READ
     char c;
-    while ((c = getopt(argc, argv, "f:l:p:saubdoh")) != -1) {
+    const char* const short_options = "f:l:p:saubdoh";
+    const struct option long_options[] = {
+        {"minfreq",                1, NULL, 'f'},
+        {"level",                  1, NULL, 'l'},
+        {"refine-singles",         0, NULL, 's'},
+        {"no-aromaticity",         0, NULL, 'a'},
+        {"p-value",                1, NULL, 'p'},
+        {"no-upper-bound-pruning", 0, NULL, 'u'},
+        {"no-bbr-classes",         0, NULL, 'b'},
+        {"no-dynamic-ub",          0, NULL, 'd'},
+        {"no-output",              0, NULL, 'o'},
+        {"help",                   0, NULL, 'h'},
+        {NULL,                     0, NULL, 0}
+    };
+    while ((c = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
         switch(c) {
         case 'f':
             minfreq = atoi(optarg);
@@ -241,7 +256,11 @@ int main(int argc, char *argv[], char *envp) {
        case 'h':
             status=2;
             break;
-       default: abort();
+       case '?':
+            status=2;
+            break;
+       default: 
+            abort();
         }
     }
 
@@ -260,29 +279,31 @@ int main(int argc, char *argv[], char *envp) {
     }
 
     if (status > 0) {
-        cerr << "usage: fminer [-f minfreq] [-l type] [-s] [-a] [-o] [-d [-b|-u]] [-p p_value] <graphs> <activities>" << endl;
-        cerr << "       fminer [-f minfreq] [-l type] [-s] [-o] <graphs>" << endl;
+        cerr << "Usage: " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-o] [-d [-b|-u]] [-p p_value] <graphs> <activities>" << endl;
+        cerr << "       " << program_name << " [-f minfreq] [-l type] [-s] [-o] <graphs>" << endl;
+        cerr << endl;
     }
     if (status==1) {
         cerr << "               use '-h' for additional information." << endl;
         return 1;
     }
     if (status > 1) {
-        cerr << " File formats:" << endl;
+        cerr << "  File formats:" << endl;
         cerr << "       <graphs> File must either have suffix .smi or .gsp, indicating SMILES or gSpan format." << endl;
         cerr << "       <activities> File must be in Activity format (suffix not relevant)." << endl;
-        cerr << " General options:" << endl;
-        cerr << "       -f Set minimum frequency. Allowable values for _minfreq_: 1, 2, ... (default: " << def_minfreq<< ")." << endl;
-        cerr << "       -l Set fragment type. Allowable values for _type_: 1 (paths) and 2 (trees) (default: " << def_type << ")." << endl;
-        cerr << "       -s Switch on refinement of fragments with frequency 1 (default: off)." << endl;
-        cerr << "       -o Switch off output (default: on)." << endl;
         cerr << endl;
-        cerr << " Upper bound pruning options:" << endl;
-        cerr << "       -a Switch off aromatic ring perception when using smiles input format (default: on)." << endl;
-        cerr << "       -d Switch off dynamic adjustment of upper bound for backbone mining (default: on)." << endl;
-        cerr << "       -b Switch off mining for backbone refinement classes (default: on)." << endl;
-        cerr << "       -u Switch off upper bound pruning (default: on)." << endl;
-        cerr << "       -p Set significance type. Allowable values for _p_value_: 0 <= p_value <= 1.0 (default: " << def_chisq << ")." << endl;
+        cerr << "  General options:" << endl;
+        cerr << "       -f  --minfreq _minfreq_      Set minimum frequency. Allowable values for _minfreq_: 1, 2, ... (default: " << def_minfreq<< ")." << endl;
+        cerr << "       -l  --level _level_          Set fragment type. Allowable values for _type_: 1 (paths) and 2 (trees) (default: " << def_type << ")." << endl;
+        cerr << "       -s  --refine-singles         Switch on refinement of fragments with frequency 1 (default: off)." << endl;
+        cerr << "       -o  --no-output              Switch off output (default: on)." << endl;
+        cerr << endl;
+        cerr << "  Upper bound pruning options:" << endl;
+        cerr << "       -a  --no-aromaticity         Switch off aromatic ring perception when using smiles input format (default: on)." << endl;
+        cerr << "       -d  --no-dynamic-ub          Switch off dynamic adjustment of upper bound for backbone mining (default: on)." << endl;
+        cerr << "       -b  --no-bbr-classes         Switch off mining for backbone refinement classes (default: on)." << endl;
+        cerr << "       -u  --no-upper-bound-pruning Switch off upper bound pruning (default: on)." << endl;
+        cerr << "       -p  --p-value _p_value_      Set significance type. Allowable values for _p_value_: 0 <= _p_value_ <= 1.0 (default: " << def_chisq << ")." << endl;
         cerr << endl;
         cerr << "See README for additional information." << endl;
         cerr << endl;

@@ -5,6 +5,8 @@ To create documentation with rdoc, do 'make doc'.
 
 LibFminer implements a method for efficiently mining relevant tree-shaped molecular fragments, each representing a geometrical classes, with minimum frequency and statistical constraints. Experimental results with four test datasets suggest that the approach is able to optimize correlation with chemical endpoints as well as inter-feature entropy. The mined fragments represent classes of fragments sharing a common core structure (backbone). The proposed method reduces feature set sizes and runtime by >90% and >60% compared to ordinary tree mining. Validation with several publicly available carcinogenicity datasets shows that their expressiveness is comparable to the complete set of tree-shaped fragments and is significantly higher than linear fragments.
 
+
+
 ==File Formats
 - Graphs are allowed in SMILES and gSpan format. This is to support both general graph mining, but to also make life more convenient when mining molecular data. For instance, for SMILES formatted input there is a switch to enable/disable aromatic ring perception, which, in gSpan format, requires re-formatting the input.
   
@@ -21,7 +23,9 @@ LibFminer implements a method for efficiently mining relevant tree-shaped molecu
     "ID\t endpoint\t activity", e.g.:
      1    Salmonella Mutagenicity    1
 
-The IDs in gSpan or SMILES format files on one side and activity IDs in activity format files on the other side should match, i.e. relate to each other via the identity function. An injective relation is also allowed, i.e., not every Activity ID must be matched by a graph id.
+The set of IDs in a gSpan or SMILES format file must be a subset of the set of activity IDs in the respective activity format file, i.e., not every Activity ID must be matched by a graph id, but vice versa.
+
+
 
 ==Switches (run Fminer w/o arguments for allowable parameter ranges, defaults and explanations):
 
@@ -38,6 +42,7 @@ The IDs in gSpan or SMILES format files on one side and activity IDs in activity
 ===General switches:
 - -s Refine fragments with frequency 1.
 - -a Disable aromatic ring perception for SMILES input.
+- -e Enable free structure mining 
 - -o Switch off output.
 
 ===Environment variables:

@@ -172,7 +172,6 @@ int main(int argc, char *argv[], char *envp) {
     bool adjust_ub = true;
     bool do_pruning = true;
     bool do_backbone = true;
-    bool free_structures = false;
 
 
     // FILE ARGUMENT READ
@@ -210,7 +209,7 @@ int main(int argc, char *argv[], char *envp) {
     
     // OPTIONS ARGUMENT READ
     char c;
-    const char* const short_options = "f:l:p:saubdoeh";
+    const char* const short_options = "f:l:p:saubdoh";
     const struct option long_options[] = {
         {"minfreq",                1, NULL, 'f'},
         {"level",                  1, NULL, 'l'},
@@ -221,7 +220,6 @@ int main(int argc, char *argv[], char *envp) {
         {"no-bbr-classes",         0, NULL, 'b'},
         {"no-dynamic-ub",          0, NULL, 'd'},
         {"no-output",              0, NULL, 'o'},
-        {"free",                   0, NULL, 'e'},
         {"help",                   0, NULL, 'h'},
         {NULL,                     0, NULL, 0}
     };
@@ -259,9 +257,6 @@ int main(int argc, char *argv[], char *envp) {
        case 'o':
             do_output = false;
             break;
-       case 'e':
-            free_structures=true;
-            break;
        case 'h':
             status=2;
             break;
@@ -275,7 +270,7 @@ int main(int argc, char *argv[], char *envp) {
 
 
     // INTEGRITY CONSTRAINTS AND HELP OUTPUT
-    if ((adjust_ub && !do_pruning) || (!do_backbone && adjust_ub) || (free_structures && do_backbone)) status = 1;
+    if ((adjust_ub && !do_pruning) || (!do_backbone && adjust_ub)) status = 1;
 
     bool input_smi = false, input_gsp = false;
     string graph_file_str;
@@ -305,7 +300,6 @@ int main(int argc, char *argv[], char *envp) {
         cerr << "       -f  --minfreq _minfreq_      Set minimum frequency. Allowable values for _minfreq_: 1, 2, ... (default: " << def_minfreq<< ")." << endl;
         cerr << "       -l  --level _level_          Set fragment type. Allowable values for _type_: 1 (paths) and 2 (trees) (default: " << def_type << ")." << endl;
         cerr << "       -s  --refine-singles         Switch on refinement of fragments with frequency 1 (default: off)." << endl;
-        cerr << "       -e  --free                   Switch on free structure mining (default: off)." << endl;
         cerr << "       -o  --no-output              Switch off output (default: on)." << endl;
         cerr << endl;
         cerr << "  Upper bound pruning options:" << endl;
@@ -339,7 +333,6 @@ int main(int argc, char *argv[], char *envp) {
     fm->SetRefineSingles(refine_singles);
     fm->SetConsoleOut(true);
     fm->SetDoOutput(do_output);
-    fm->SetFreeStructures(free_structures);
 
     
     //////////

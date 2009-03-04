@@ -2,9 +2,9 @@
 PROGRAM = fminer
 
 # OPTIONS
-LIBDIR        = ../libfminer
+LIBDIR        = libfminer
 INCLUDE       = -I$(LIBDIR)
-INCLUDE       += -I/usr/local/include/openbabel-2.0/
+INCLUDE       += -I/usr/include/openbabel-2.0/
 
 LDFLAGS       = -L$(LIBDIR)
 

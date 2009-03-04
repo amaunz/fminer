@@ -1,21 +1,20 @@
-/* Copyright (C) 2008  Andreas Maunz <andreas@maunz.de> 
- *
- *    
- *        This program is free software; you can redistribute it and/or modify
- *        it under the terms of the GNU General Public License as published by
- *        the Free Software Foundation; either version 2 of the License, or
- *        (at your option) any later version.
- *
- *        This program is distributed in the hope that it will be useful,
- *        but WITHOUT ANY WARRANTY; without even the implied warranty of
- *        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *        GNU General Public License for more details.
- *
- *        You should have received a copy of the GNU General Public License
- *        along with this program; if not, write to the Free Software
- *        Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- *
- */
+// fminer.cpp
+// © 2008 by Andreas Maunz, andreas@maunz.de, jun 2008
+
+/*
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <getopt.h>
 #include <time.h>
@@ -30,7 +29,7 @@ using namespace OpenBabel;
 
 extern Statistics* statistics;
 
-Fminer* fm;
+Fminer* fminer;
 
 // helper routines
 void puti ( FILE *f, int i ) {
@@ -59,7 +58,7 @@ void read_gsp (char* graph_file) {
         cerr << "Error opening file '" << graph_file << "': " << strerror(errno) << "." << endl;
         exit(1);
     }
-    fm->ReadGsp(input);
+    fminer->ReadGsp(input);
 }
 
 void read_smi (char* graph_file) {
@@ -84,14 +83,14 @@ void read_smi (char* graph_file) {
                 tree_id = (unsigned int) atoi (tmp_field.c_str());
             }
             else if (field_nr == 1) { // SMILES
-                fm->AddCompound (tmp_field , tree_id);
+                fminer->AddCompound (tmp_field , tree_id);
 
             }
             field_nr++;
 
         }
     }
-    cerr << fm->GetNoCompounds() << " compounds" << endl;
+    cerr << fminer->GetNoCompounds() << " compounds" << endl;
     input.close();
 
 }
@@ -133,7 +132,7 @@ void read_act (char* act_file) {
                 int act_value;
                 str >> act_value;
                 if ((act_value != 0) && act_value != 1) { cerr << "Error! Invalid activity: '" << tmp_field << "' in file " << act_file << ", line " << line_nr+1 << "." << endl; exit(1); }
-                fm->AddActivity((bool) act_value, tid);
+                fminer->AddActivity((bool) act_value, tid);
 			}
 			else {
 				cerr << "Error! More than 3 columns at line " << line_nr << "." << endl;
@@ -149,7 +148,7 @@ void read_act (char* act_file) {
 
 
 // main
-int main(int argc, char *argv[], char *envp) {
+int main(int argc, char *argv[], char *envp[]) {
 
     const char* program_name = argv[0];
 
@@ -283,8 +282,8 @@ int main(int argc, char *argv[], char *envp) {
     }
 
     if (status > 0) {
-        cerr << "Usage: " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-o] [-d [-b [-e]|-u]] [-p p_value] <graphs> <activities>" << endl;
-        cerr << "       " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-o] [-e] <graphs>" << endl;
+        cerr << "Usage: " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-o] [-d [-b |-u]] [-p p_value] <graphs> <activities>" << endl;
+        cerr << "       " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-o] <graphs>" << endl;
         cerr << endl;
     }
     if (status==1) {
@@ -318,21 +317,21 @@ int main(int argc, char *argv[], char *envp) {
 
     // DEFAULT SETTINGS FOR THIS HOST APP
    if (graph_file && act_file) {
-        fm = new Fminer(type, minfreq, chisq_sig, do_backbone);
-        fm->SetDynamicUpperBound(adjust_ub);
-        fm->SetPruning(do_pruning);
+        fminer = new Fminer(type, minfreq, chisq_sig, do_backbone);
+        fminer->SetDynamicUpperBound(adjust_ub);
+        fminer->SetPruning(do_pruning);
     }
     else if (graph_file) {
-        fm = new Fminer(type, minfreq);
-        fm->SetChisqActive(false);
+        fminer = new Fminer(type, minfreq);
+        fminer->SetChisqActive(false);
     }
     else {
         exit(1);
     }
-    fm->SetAromatic(aromatic);
-    fm->SetRefineSingles(refine_singles);
-    fm->SetConsoleOut(true);
-    fm->SetDoOutput(do_output);
+    fminer->SetAromatic(aromatic);
+    fminer->SetRefineSingles(refine_singles);
+    fminer->SetConsoleOut(true);
+    fminer->SetDoOutput(do_output);
 
     
     //////////
@@ -361,18 +360,18 @@ int main(int argc, char *argv[], char *envp) {
     else cerr << "Mining fragments... (min freq: " << minfreq << ", type: " << type << ")" << endl;
 
     clock_t t1 = clock ();
-    for ( int j = 0; j < (int) fm->GetNoRootNodes(); j++ ) {
-        vector<string>* result = fm->MineRoot(j);
-        if (!fm->GetConsoleOut()) { 
+    for ( int j = 0; j < (int) fminer->GetNoRootNodes(); j++ ) {
+        vector<string>* result = fminer->MineRoot(j);
+        if (!fminer->GetConsoleOut()) { 
             each (*result) {
-                cout << (*result)[i];
+                cout << (*result)[i] << endl;
             }
         }
     }
     clock_t t2 = clock ();
-//    if (!fm->GetBackbone()) statistics->print();
+//    if (!fminer->GetBackbone()) statistics->print();
     cerr << "Approximate total runtime: " << ( (float) t2 - t1 ) / CLOCKS_PER_SEC << "s" << endl;
 
-    delete fm;
+    delete fminer;
 
 }

@@ -1,13 +1,11 @@
-=Fminer (A chemical fragment miner)
+Welcome to Fminer.
 This is the official Fminer application. It depends on LibFminer (http://github.com/amaunz/libFminer/tree/master). 
-Latest scientific documentation is available from http://github.com/amaunz/Fminer-doc/tree/master.
 To create documentation with rdoc, do 'make doc'.
 
-LibFminer implements a method for efficiently mining relevant tree-shaped molecular fragments, each representing a geometrical classes, with minimum frequency and statistical constraints. Experimental results with four test datasets suggest that the approach is able to optimize correlation with chemical endpoints as well as inter-feature entropy. The mined fragments represent classes of fragments sharing a common core structure (backbone). The proposed method reduces feature set sizes and runtime by >90% and >60% compared to ordinary tree mining. Validation with several publicly available carcinogenicity datasets shows that their expressiveness is comparable to the complete set of tree-shaped fragments and is significantly higher than linear fragments.
+For installation and documentation see INSTALL.
+For license information see LICENSE.
 
-
-
-==File Formats
+File Formats:
 - Graphs are allowed in SMILES and gSpan format. This is to support both general graph mining, but to also make life more convenient when mining molecular data. For instance, for SMILES formatted input there is a switch to enable/disable aromatic ring perception, which, in gSpan format, requires re-formatting the input.
   
   SMILES file line format is defined by 
@@ -27,33 +25,30 @@ The set of IDs in a gSpan or SMILES format file must be a subset of the set of a
 
 
 
-==Switches (run Fminer w/o arguments for allowable parameter ranges, defaults and explanations):
+Switches (run Fminer w/o arguments for allowable parameter ranges, defaults and explanations):
 
-===Constraint parameters:
-- -f Minimum frequency constraint, used for anti-monotonic pruning.
-- -l Subgraph type, choices are paths and trees.
-- -p Chi-square significance level, used for statistical upper-bound pruning.
+ Constraint parameters:
+ -f Minimum frequency constraint, used for anti-monotonic pruning.
+ -l Subgraph type, choices are paths and trees.
+ -p Chi-square significance level, used for statistical upper-bound pruning.
 
-===Constraint switches:
-- -d Deactivate dynamic adjustment of upper bound (less efficient, use only for performance evaluation). Can only be set when -c is not set.
-- -b Switch off mining of only the most significant/most general representative of each backbone.
-- -u Deactivate upper bound pruning for chi-square constraint (less efficient, use only for performance evaluation).
+ Constraint switches:
+ -d Deactivate dynamic adjustment of upper bound (less efficient, use only for performance evaluation). Can only be set when -c is not set.
+ -b Switch off mining of only the most significant/most general representative of each backbone.
+ -u Deactivate upper bound pruning for chi-square constraint (less efficient, use only for performance evaluation).
 
-===General switches:
-- -s Refine fragments with frequency 1.
-- -a Disable aromatic ring perception for SMILES input.
-- -e Enable free structure mining 
-- -o Switch off output.
+ General switches:
+ -s Refine fragments with frequency 1.
+ -a Disable aromatic ring perception for SMILES input.
+ -o Switch off output.
 
-===Environment variables:
-- Define the FMINER_SMARTS environment variable to produce output in SMARTS format (e.g. export FMINER_SMARTS=1).
-- Additionally define the FMINER_LAZAR environment variable to produce output in linfrag format which can be used as input to Lazar (e.g. export FMINER_LAZAR=1).
+ Environment variables:
+ Define the FMINER_SMARTS environment variable to produce output in SMARTS format (e.g. export FMINER_SMARTS=1).
+ Additionally define the FMINER_LAZAR environment variable to produce output in linfrag format which can be used as input to Lazar (e.g. export FMINER_LAZAR=1).
 
-===Remarks:
-- Structures are output to STDOUT in the specified format.
-- Output consists of blocks of gSpan graphs.
-- When using SMARTS output (FMINER_SMARTS defined), each line is a YAML sequence, containing SMARTS fragment, p-value, and two sequences denoting positive and negative class occurrences (line numbers in Smiles file). When FMINER_LAZAR is set, the linfrag output format is used.
+ Remarks:
+ Structures are output to STDOUT in the specified format.
+ Output consists of blocks of gSpan graphs.
+ When using SMARTS output (FMINER_SMARTS defined), each line is a YAML sequence, containing SMARTS fragment, p-value, and two sequences denoting positive and negative class occurrences (line numbers in Smiles file). When FMINER_LAZAR is set, the linfrag output format is used.
 
-==Licensing information:
-Fminer is free software ('free' as in 'freedom', see LICENSE).
 Andreas Maunz, 2008.

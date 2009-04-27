@@ -10,7 +10,11 @@ LDFLAGS       = -L$(LIBDIR)
 
 CC            = g++
 CXXFLAGS      = -g -Wall -O3
+ifeq ($(OS), Windows_NT) # assume MinGW/Windows
+LIBS	      = -lm -llibopenbabel-3 -llibgsl -llibgslcblas -llibfminer
+else
 LIBS	      = -lopenbabel -lfminer -lgsl -lgslcblas
+endif
 RPATH         = -Wl,-rpath,$(LIBDIR)
 
 # TARGETS
@@ -25,9 +29,5 @@ $(PROGRAM): main.cpp
 	      -o $@ $<
 
 .PHONY:
-doc: README
-	rdoc $<
-
-.PHONY:
 clean:
-	-rm -rf $(PROGRAM) doc
+	-rm -rf $(PROGRAM) $(PROGRAM).exe

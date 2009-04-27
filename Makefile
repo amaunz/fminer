@@ -2,11 +2,11 @@
 PROGRAM = fminer
 
 # OPTIONS
-LIBDIR        = libfminer
+LIBDIR        = ../libfminer
 INCLUDE       = -I$(LIBDIR)
-INCLUDE       += -I/usr/include/openbabel-2.0/
+INCLUDE       += -I/usr/include/openbabel-2.0/ -I /home/openbabel-2.2.1/include -I /c/Program\ Files/GnuWin32/include/
 
-LDFLAGS       = -L$(LIBDIR)
+LDFLAGS       = -L$(LIBDIR) -L /c/Program\ Files/GnuWin32/bin
 
 CC            = g++
 CXXFLAGS      = -g -Wall -O3
@@ -31,3 +31,6 @@ $(PROGRAM): main.cpp
 .PHONY:
 clean:
 	-rm -rf $(PROGRAM) $(PROGRAM).exe
+
+
+

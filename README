@@ -1,6 +1,6 @@
 Welcome to Fminer.
-This is the official Fminer application. It depends on LibFminer (http://github.com/amaunz/libFminer/tree/master). 
-To create documentation with rdoc, do 'make doc'.
+This is the official Fminer application. It depends on LibFminer (http://github.com/amaunz/libfminer/tree/master ). 
+The official website with documentation is http://www.maunz.de/libfminer-doc .
 
 For installation and documentation see INSTALL.
 For license information see LICENSE.

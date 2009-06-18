@@ -171,6 +171,7 @@ int main(int argc, char *argv[], char *envp[]) {
     bool adjust_ub = true;
     bool do_pruning = true;
     bool do_backbone = true;
+    bool line_nrs = false;
 
 
     // FILE ARGUMENT READ
@@ -208,7 +209,7 @@ int main(int argc, char *argv[], char *envp[]) {
     
     // OPTIONS ARGUMENT READ
     char c;
-    const char* const short_options = "f:l:p:saubdoh";
+    const char* const short_options = "f:l:p:saubdonh";
     const struct option long_options[] = {
         {"minfreq",                1, NULL, 'f'},
         {"level",                  1, NULL, 'l'},
@@ -219,6 +220,7 @@ int main(int argc, char *argv[], char *envp[]) {
         {"no-bbr-classes",         0, NULL, 'b'},
         {"no-dynamic-ub",          0, NULL, 'd'},
         {"no-output",              0, NULL, 'o'},
+        {"line-nrs",               0, NULL, 'n'},
         {"help",                   0, NULL, 'h'},
         {NULL,                     0, NULL, 0}
     };
@@ -256,6 +258,9 @@ int main(int argc, char *argv[], char *envp[]) {
        case 'o':
             do_output = false;
             break;
+       case 'n':
+            line_nrs = true;
+            break;
        case 'h':
             status=2;
             break;
@@ -282,8 +287,8 @@ int main(int argc, char *argv[], char *envp[]) {
     }
 
     if (status > 0) {
-        cerr << "Usage: " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-o] [-d [-b |-u]] [-p p_value] <graphs> <activities>" << endl;
-        cerr << "       " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-o] <graphs>" << endl;
+        cerr << "Usage: " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-n] [-o] [-d [-b |-u]] [-p p_value] <graphs> <activities>" << endl;
+        cerr << "       " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-n] [-o] <graphs>" << endl;
         cerr << endl;
     }
     if (status==1) {
@@ -300,6 +305,7 @@ int main(int argc, char *argv[], char *envp[]) {
         cerr << "       -l  --level _level_          Set fragment type. Allowable values for _type_: 1 (paths) and 2 (trees) (default: " << def_type << ")." << endl;
         cerr << "       -s  --refine-singles         Switch on refinement of fragments with frequency 1 (default: off)." << endl;
         cerr << "       -o  --no-output              Switch off output (default: on)." << endl;
+        cerr << "       -n  --line-nrs               Switch on line numbers in output file (default: off)." << endl;
         cerr << endl;
         cerr << "  Upper bound pruning options:" << endl;
         cerr << "       -a  --no-aromaticity         Switch off aromatic ring perception when using smiles input format (default: on)." << endl;
@@ -332,6 +338,7 @@ int main(int argc, char *argv[], char *envp[]) {
     fminer->SetRefineSingles(refine_singles);
     fminer->SetConsoleOut(true);
     fminer->SetDoOutput(do_output);
+    fminer->SetLineNrs(line_nrs);
 
     
     //////////

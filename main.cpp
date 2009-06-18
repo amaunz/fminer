@@ -172,6 +172,8 @@ int main(int argc, char *argv[], char *envp[]) {
     bool do_pruning = true;
     bool do_backbone = true;
     bool line_nrs = false;
+    bool bbrc_sep = false;
+    bool most_specific_trees_only = false;
 
 
     // FILE ARGUMENT READ
@@ -209,18 +211,20 @@ int main(int argc, char *argv[], char *envp[]) {
     
     // OPTIONS ARGUMENT READ
     char c;
-    const char* const short_options = "f:l:p:saubdonh";
+    const char* const short_options = "f:l:p:saubmdonrh";
     const struct option long_options[] = {
         {"minfreq",                1, NULL, 'f'},
         {"level",                  1, NULL, 'l'},
+        {"p-value",                1, NULL, 'p'},
         {"refine-singles",         0, NULL, 's'},
         {"no-aromaticity",         0, NULL, 'a'},
-        {"p-value",                1, NULL, 'p'},
         {"no-upper-bound-pruning", 0, NULL, 'u'},
         {"no-bbr-classes",         0, NULL, 'b'},
+        {"max-trees",              0, NULL, 'm'},
         {"no-dynamic-ub",          0, NULL, 'd'},
         {"no-output",              0, NULL, 'o'},
         {"line-nrs",               0, NULL, 'n'},
+        {"bbrc-sep",               0, NULL, 'r'},
         {"help",                   0, NULL, 'h'},
         {NULL,                     0, NULL, 0}
     };
@@ -251,30 +255,35 @@ int main(int argc, char *argv[], char *envp[]) {
             do_backbone = false;
             if (!act_file) status = 1;
             break;
-       case 'd':
+        case 'm':
+            most_specific_trees_only = true;
+        case 'd':
             adjust_ub = false;
             if (!act_file) status = 1;
             break;
-       case 'o':
+        case 'o':
             do_output = false;
             break;
-       case 'n':
+        case 'n':
             line_nrs = true;
             break;
-       case 'h':
+        case 'r':
+            bbrc_sep = true;
+        case 'h':
             status=2;
             break;
-       case '?':
+        case '?':
             status=2;
             break;
-       default: 
+        default: 
             abort();
         }
     }
 
 
     // INTEGRITY CONSTRAINTS AND HELP OUTPUT
-    if ((adjust_ub && !do_pruning) || (!do_backbone && adjust_ub)) status = 1;
+    if ((adjust_ub && !do_pruning) || (!do_backbone && adjust_ub) || (do_backbone && most_specific_trees_only)) status = 1;
+             
 
     bool input_smi = false, input_gsp = false;
     string graph_file_str;
@@ -287,8 +296,8 @@ int main(int argc, char *argv[], char *envp[]) {
     }
 
     if (status > 0) {
-        cerr << "Usage: " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-n] [-o] [-d [-b |-u]] [-p p_value] <graphs> <activities>" << endl;
-        cerr << "       " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-n] [-o] <graphs>" << endl;
+        cerr << "Usage: " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-o] [-n] [-r] [-d [-b [-m] | -u]] [-p p_value] <graphs> <activities>" << endl;
+        cerr << "       " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-o] [-n] [-r] <graphs>" << endl;
         cerr << endl;
     }
     if (status==1) {
@@ -306,11 +315,13 @@ int main(int argc, char *argv[], char *envp[]) {
         cerr << "       -s  --refine-singles         Switch on refinement of fragments with frequency 1 (default: off)." << endl;
         cerr << "       -o  --no-output              Switch off output (default: on)." << endl;
         cerr << "       -n  --line-nrs               Switch on line numbers in output file (default: off)." << endl;
+        cerr << "       -r  --bbrc-sep               Switch on BBRC separator in result vector (default: off)." << endl;
         cerr << endl;
         cerr << "  Upper bound pruning options:" << endl;
         cerr << "       -a  --no-aromaticity         Switch off aromatic ring perception when using smiles input format (default: on)." << endl;
         cerr << "       -d  --no-dynamic-ub          Switch off dynamic adjustment of upper bound for backbone mining (default: on)." << endl;
         cerr << "       -b  --no-bbr-classes         Switch off mining for backbone refinement classes (default: on)." << endl;
+        cerr << "       -m  --max-trees              Switch on mining for maximal trees, aka the positive border (default: off)." << endl;
         cerr << "       -u  --no-upper-bound-pruning Switch off upper bound pruning (default: on)." << endl;
         cerr << "       -p  --p-value _p_value_      Set significance type. Allowable values for _p_value_: 0 <= _p_value_ <= 1.0 (default: " << def_chisq << ")." << endl;
         cerr << endl;
@@ -339,6 +350,8 @@ int main(int argc, char *argv[], char *envp[]) {
     fminer->SetConsoleOut(true);
     fminer->SetDoOutput(do_output);
     fminer->SetLineNrs(line_nrs);
+    fminer->SetBbrcSep(bbrc_sep);
+    fminer->SetMostSpecTreesOnly(most_specific_trees_only);
 
     
     //////////

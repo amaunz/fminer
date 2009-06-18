@@ -37,11 +37,14 @@ Switches (run Fminer w/o arguments for allowable parameter ranges, defaults and 
  Constraint switches:
  -d Deactivate dynamic adjustment of upper bound (less efficient, use only for performance evaluation). Can only be set when -c is not set.
  -b Switch off mining of only the most significant/most general representative of each backbone.
+ -m Switch on mining of maximal trees, as induced by constraints.
  -u Deactivate upper bound pruning for chi-square constraint (less efficient, use only for performance evaluation).
 
  General switches:
  -s Refine fragments with frequency 1.
  -a Disable aromatic ring perception for SMILES input.
+ -r Insert empty vectors in result vector to indicate BBRC borders.
+ -n Output line numbers from input file instead of IDs in result file.
  -o Switch off output.
 
  Environment variables:

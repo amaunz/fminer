@@ -54,6 +54,7 @@ Switches (run Fminer w/o arguments for allowable parameter ranges, defaults and 
  Remarks:
  Structures are output to STDOUT in the specified format.
  Output consists of blocks of gSpan graphs.
- When using SMARTS output (FMINER_SMARTS defined), each line is a YAML sequence, containing SMARTS fragment, p-value, and two sequences denoting positive and negative class occurrences (line numbers in Smiles file). When FMINER_LAZAR is set, the linfrag output format is used.
-
+ When using SMARTS output (environment variable FMINER_SMARTS is defined), each line is a YAML sequence, containing SMARTS fragment, p-value, and two sequences denoting positive and negative class occurrences (default compound ids, see also switch -n). 
+ When also FMINER_LAZAR is set, the linfrag output format is used.
+ 
 Andreas Maunz, 2008.

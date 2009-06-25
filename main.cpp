@@ -167,7 +167,7 @@ int main(int argc, char *argv[], char *envp[]) {
 
     bool do_output = true;
     bool refine_singles = false;
-    bool aromatic = true;
+    bool aromatic = false;
     bool adjust_ub = true;
     bool do_pruning = true;
     bool do_backbone = true;
@@ -240,7 +240,7 @@ int main(int argc, char *argv[], char *envp[]) {
             refine_singles = true;
             break;
         case 'a':
-            aromatic = false;
+            aromatic = true;
             if (!graph_file) status = 1;
             break;
         case 'p':
@@ -318,7 +318,7 @@ int main(int argc, char *argv[], char *envp[]) {
         cerr << "       -r  --bbrc-sep               Switch on BBRC separator in result vector (default: off)." << endl;
         cerr << endl;
         cerr << "  Upper bound pruning options:" << endl;
-        cerr << "       -a  --no-aromaticity         Switch off aromatic ring perception when using smiles input format (default: on)." << endl;
+        cerr << "       -a  --aromaticity            Switch on aromatic ring perception when using smiles input format (default: off)." << endl;
         cerr << "       -d  --no-dynamic-ub          Switch off dynamic adjustment of upper bound for backbone mining (default: on)." << endl;
         cerr << "       -b  --no-bbr-classes         Switch off mining for backbone refinement classes (default: on)." << endl;
         cerr << "       -m  --max-trees              Switch on mining for maximal trees, aka the positive border (default: off)." << endl;

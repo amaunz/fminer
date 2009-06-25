@@ -42,7 +42,7 @@ Switches (run Fminer w/o arguments for allowable parameter ranges, defaults and 
 
  General switches:
  -s Refine fragments with frequency 1.
- -a Disable aromatic ring perception for SMILES input.
+ -a Enable aromatic ring perception for SMILES input.
  -r Insert empty vectors in result vector to indicate BBRC borders.
  -n Output line numbers from input file instead of IDs in result file.
  -o Switch off output.

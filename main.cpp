@@ -303,6 +303,7 @@ int main(int argc, char *argv[], char *envp[]) {
             break;
         case 'r':
             bbrc_sep = true;
+            break;
         case 'h':
             status=2;
             break;

@@ -66,28 +66,47 @@ void read_smi (char* graph_file) {
 
     ifstream input;
     string line;
-    string tmp_field;
+    int line_nr=0;
+    string tmp_field="";
+
+    // Open input stream
     input.open(graph_file);
-    
     if (!input) {
         cerr << "Error opening file '" << graph_file << "': " << strerror(errno) << "." << endl;
         exit(1);
     }
 
+    // draw line from input
+    int field_nr = 2; // initialize to 'valid' pattern
     while (getline(input, line)) {
-        istringstream iss(line);
+        line_nr++;
+        istringstream iss(line); // line as iss
         string id = "";
-        int field_nr = 0;
+
+        // if previous line has had two entries, i.e. format was correct, then re-initialize
+        if (field_nr==2) field_nr=0;
+        else {
+            cerr << "Error! Line no. " << line_nr-1 << " in file '" << graph_file << "' is not in correct input format. Please refer to README." << endl;
+            exit(1);
+        }
+
         while(getline(iss, tmp_field, '\t')) {  // split at tabs
-            if (field_nr == 0) { // ID
+            if (field_nr == 0) {        // ID
                 tree_id = (unsigned int) atoi (tmp_field.c_str());
+                if (tree_id == 0) { 
+                    cerr << "Error! Invalid ID: '" << tmp_field << "' in file  '" << graph_file << "', line " << line_nr+1 << "." << endl; 
+                    exit(1); 
+                }
+                field_nr=1;
             }
-            else if (field_nr == 1) { // SMILES
+            else if (field_nr == 1) {   // SMILES
                 fminer->AddCompound (tmp_field , tree_id);
-
+                field_nr=2;
             }
-            field_nr++;
-
+			else {
+                cerr << "Error! Line no. " << line_nr << " in file '" << graph_file << "' is not in correct input format. Please refer to README." << endl;
+				exit(1);
+			}
         }
     }
     cerr << fminer->GetNoCompounds() << " compounds" << endl;
@@ -99,48 +118,63 @@ void read_act (char* act_file) {
     ifstream input;
     string line;
     string tmp_field;
-    string no_id;
     string act_name;
     Tid tid=0;
     unsigned int line_nr = 0;
     
+    // Open input stream
     input.open(act_file);
     if (!input) {
         cerr << "Error opening file '" << act_file << "': " << strerror(errno) << "." << endl;
         exit(1);
     }
 
+    // draw line from input
+    unsigned int field_nr = 3; // initialize to 'valid' pattern
 	while (getline(input, line)) {
-		istringstream iss(line); 
-		unsigned int field_nr = 0;
+        line_nr++;
+		istringstream iss(line); // line as iss
+
+        if (field_nr==3) field_nr=0;
+        else {
+            cerr << "Error! Line no. " << line_nr-1 << " in file '" << act_file << "' is not in correct input format. Please refer to README." << endl;
+            exit(1);
+        }
+
 		while(getline(iss, tmp_field, '\t')) {	// split at tabs
 			remove_dos_cr(&tmp_field);
-			if (field_nr == 0) {		// ID
-				if (tmp_field == no_id)		// ignore compounds without structures
-					break;
-				else {
-                    tid = (Tid) atoi(tmp_field.c_str());
-                    if (tid == 0) { cerr << "Error! Invalid ID: '" << tmp_field << "' in file " << act_file << ", line " << line_nr+1 << "." << endl; exit(1); }
-				}
+
+			if (field_nr == 0) {		    // ID
+                tid = (Tid) atoi(tmp_field.c_str());
+                if (tid == 0) { 
+                    cerr << "Error! Invalid ID: '" << tmp_field << "' in file '" << act_file << "', line " << line_nr << "." << endl; 
+                    exit(1); 
+                }
+                field_nr=1;
 			}
-			else if (field_nr == 1) {	// ACTIVITY NAME
+
+			else if (field_nr == 1) {	    // ACTIVITY NAME
 				act_name = tmp_field;
+                field_nr=2;
 			}
-			else if (field_nr == 2) {	// ACTIVITY VALUES
+
+			else if (field_nr == 2) {	    // ACTIVITY VALUES
                 stringstream str;
-                str  << tmp_field;
-                int act_value;
-                str >> act_value;
-                if ((act_value != 0) && act_value != 1) { cerr << "Error! Invalid activity: '" << tmp_field << "' in file " << act_file << ", line " << line_nr+1 << "." << endl; exit(1); }
+                str  << tmp_field; int act_value; str >> act_value;
+                if ((act_value != 0) && act_value != 1) { 
+                    cerr << "Error! Invalid activity: '" << tmp_field << "' in file '" << act_file << "', line " << line_nr << "." << endl; 
+                    exit(1);
+                }
                 fminer->AddActivity((bool) act_value, tid);
+                field_nr=3;
 			}
+
 			else {
-				cerr << "Error! More than 3 columns at line " << line_nr << "." << endl;
+                cerr << "Error! Line no. " << line_nr << " in file '" << act_file << "' is not in correct input format. Please refer to README." << endl;
 				exit(1);
 			}
-			field_nr++;
+
 		}
-		line_nr++;
 	}
 
 

@@ -7,6 +7,7 @@ The official website with documentation is http://www.maunz.de/libfminer-doc .
 For installation and documentation see INSTALL.
 For license information see LICENSE.
 
+
 File Formats:
 - Graphs are allowed in SMILES and gSpan format. This is to support both general graph mining, but to also make life more convenient when mining molecular data. For instance, for SMILES formatted input there is a switch to enable/disable aromatic ring perception, which, in gSpan format, requires re-formatting the input.
   
@@ -47,14 +48,34 @@ Switches (run Fminer w/o arguments for allowable parameter ranges, defaults and 
  -n Output line numbers from input file instead of IDs in result file.
  -o Switch off output.
 
+
+
  Environment variables:
  Define the FMINER_SMARTS environment variable to produce output in SMARTS format (e.g. export FMINER_SMARTS=1).
  Additionally define the FMINER_LAZAR environment variable to produce output in linfrag format which can be used as input to Lazar (e.g. export FMINER_LAZAR=1).
+
+
 
  Remarks:
  Structures are output to STDOUT in the specified format.
  Output consists of blocks of gSpan graphs.
  When using SMARTS output (environment variable FMINER_SMARTS is defined), each line is a YAML sequence, containing SMARTS fragment, p-value, and two sequences denoting positive and negative class occurrences (default compound ids, see also switch -n). 
  When also FMINER_LAZAR is set, the linfrag output format is used.
+
+
+ Examples (in all cases, 1-frequent patterns are not refined further):
+
+ # All 2-frequent and 95%-significant BBRC patterns, using dynamic UB pruning
+ ./fminer <graphs> <activities> 
+
+ # Same as above, but much slower (explicitly no dynamic UB pruning)
+ ./fminer -d <graphs> <activities>                                        
+
+ # All 2-frequent and 95%-significant patterns (no dynamic UB pruning possible)
+ ./fminer -d -b <graphs> <activities>
+
+ # All 20-frequent patterns
+ ./fminer -f 20 <graphs>
+
  
 Andreas Maunz, 2008.

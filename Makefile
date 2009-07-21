@@ -19,7 +19,7 @@
 
 
 # PATH TO LIBFMINER SOURCE DIRECTORY:
-LIBDIR        = ../libfminer
+LIBDIR        = /home/am/validations/libfminer
 # ADJUST COMPILER PATH TO OPENBABEL INCLUDE FILES (1st line Linux, 2nd line Windows):
 INCLUDE_OB    = -I/usr/local/include/openbabel-2.0
 INCLUDE_OB   += -I/home/openbabel-2.2.1/include
@@ -33,6 +33,9 @@ LDFLAGS_OB   += -L.
 # ADJUST LINKER PATH TO GSL LIBRARY FILES (1st line Linux, 2nd line Windows):
 LDFLAGS_GSL   =
 LDFLAGS_GSL  += -L/c/Program\ Files/GnuWin32/bin/
+
+# FOR LINUX: INSTALL TARGET DIRECTORY
+DESTDIR       = /usr/local/bin
 
 
 # NORMALLY NO ADJUSTMENT NECESSARY BELOW THIS LINE. Exit and try 'make' now.
@@ -48,18 +51,18 @@ LIBS	      = -lm -llibopenbabel-3 -llibgsl -llibgslcblas -llibfminer
 else
 LIBS	      = -lopenbabel -lfminer -lgsl -lgslcblas
 endif
-RPATH         = -Wl,-rpath,$(LIBDIR)
 
 # TARGETS
-all: lib $(PROGRAM) 
-lib: 
-	$(MAKE) -C $(LIBDIR)
+all: $(PROGRAM) 
 $(PROGRAM): main.cpp
 	$(CC) $(CXXFLAGS) $(INCLUDE) \
 	      $(LIBS) \
 	      $(LDFLAGS) \
-	      $(RPATH) \
 	      -o $@ $<
+
+install: $(PROGRAM)
+	cp -P fminer $(DESTDIR)
+
 .PHONY:
 clean:
 	-rm -rf $(PROGRAM) $(PROGRAM).exe

@@ -1,15 +1,16 @@
-Welcome to Fminer.
+ Welcome to Fminer.
 
-This is Fminer (application), available from http://github.com/amaunz/fminer/tree/master .
-It depends on LibFminer, available from http://github.com/amaunz/libfminer/tree/master . 
-The official website with documentation is http://www.maunz.de/libfminer-doc .
+ This is Fminer (application), available from http://github.com/amaunz/fminer/tree/master .
+ It depends on LibFminer, available from http://github.com/amaunz/libfminer/tree/master . 
+ The official website with documentation is http://www.maunz.de/libfminer-doc .
 
-For installation and documentation see INSTALL.
-For license information see LICENSE.
+ For installation and documentation see INSTALL.
+ For license information see LICENSE.
 
 
-File Formats:
-- Graphs are allowed in SMILES and gSpan format. This is to support both general graph mining, but to also make life more convenient when mining molecular data. For instance, for SMILES formatted input there is a switch to enable/disable aromatic ring perception, which, in gSpan format, requires re-formatting the input.
+ File Formats:
+ =============
+ Graphs are allowed in SMILES and gSpan format. This is to support both general graph mining, but to also make life more convenient when mining molecular data. For instance, for SMILES formatted input there is a switch to enable/disable aromatic ring perception, which, in gSpan format, requires re-formatting the input.
   
   SMILES file line format is defined by 
     "ID\t SMILES", e.g.:
@@ -24,12 +25,11 @@ File Formats:
     "ID\t endpoint\t activity", e.g.:
      1    Salmonella Mutagenicity    1
 
-The set of IDs in a gSpan or SMILES format file must be a subset of the set of activity IDs in the respective activity format file, i.e., not every Activity ID must be matched by a graph id, but vice versa.
+ The set of IDs in a gSpan or SMILES format file must be a subset of the set of activity IDs in the respective activity format file, i.e., not every Activity ID must be matched by a graph id, but vice versa.
 
 
-
-Switches (run Fminer w/o arguments for allowable parameter ranges, defaults and explanations):
-
+ Switches (run Fminer w/o arguments for allowable parameter ranges, defaults and explanations):
+ ========
  Constraint parameters:
  -f Minimum frequency constraint, used for anti-monotonic pruning.
  -l Subgraph type, choices are paths and trees.
@@ -49,32 +49,38 @@ Switches (run Fminer w/o arguments for allowable parameter ranges, defaults and 
  -o Switch off output.
 
 
-
  Environment variables:
+ ======================
  Define the FMINER_SMARTS environment variable to produce output in SMARTS format (e.g. export FMINER_SMARTS=1).
  Additionally define the FMINER_LAZAR environment variable to produce output in linfrag format which can be used as input to Lazar (e.g. export FMINER_LAZAR=1).
 
 
-
  Remarks:
+ ========
  Structures are output to STDOUT in the specified format.
  Output consists of blocks of gSpan graphs.
  When using SMARTS output (environment variable FMINER_SMARTS is defined), each line is a YAML sequence, containing SMARTS fragment, p-value, and two sequences denoting positive and negative class occurrences (default compound ids, see also switch -n). 
  When also FMINER_LAZAR is set, the linfrag output format is used.
 
 
- Examples (in all cases, 1-frequent patterns are not refined further):
+ Examples:
+ =========
 
- # All 2-frequent and 95%-significant BBRC patterns, using dynamic UB pruning
+ In any case, 1-frequent patterns are not refined further, unless you use the -s switch 
+
+ Use BBRC mining (default):
+
+ # BBRC representatives (min frequency 2, min significance 95%), using dynamic UB pruning
  ./fminer <graphs> <activities> 
-
- # Same as above, but much slower (explicitly no dynamic UB pruning)
+ # same as above, but much slower (explicitly no dynamic UB pruning)
  ./fminer -d <graphs> <activities>                                        
 
- # All 2-frequent and 95%-significant patterns (no dynamic UB pruning possible)
- ./fminer -d -b <graphs> <activities>
+ Switch off BBRC mining:
 
- # All 20-frequent patterns
+ # all 2-frequent and 95%-significant features
+ # Note, that the -d is mandatory (no dynamic UB pruning possible here)!
+ ./fminer -d -b <graphs> <activities>
+ # All 20-frequent patterns (standard frequent pattern mining)
  ./fminer -f 20 <graphs>
 
  

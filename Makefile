@@ -19,7 +19,7 @@
 
 
 # PATH TO LIBFMINER SOURCE DIRECTORY:
-LIBDIR        = /home/am/validations/libfminer
+LIBDIR        = /home/am/validations/last
 # ADJUST COMPILER PATH TO OPENBABEL INCLUDE FILES (1st line Linux, 2nd line Windows):
 INCLUDE_OB    = -I/usr/local/include/openbabel-2.0
 INCLUDE_OB   += -I/home/openbabel-2.2.1/include
@@ -45,7 +45,7 @@ PROGRAM = fminer
 CC            = g++
 INCLUDE       = -I$(LIBDIR) $(INCLUDE_OB) $(INCLUDE_GSL)
 LDFLAGS       = -L$(LIBDIR) $(LDFLAGS_OB) $(LDFLAGS_GSL)
-CXXFLAGS      = -g -Wall -O3
+CXXFLAGS      = -Wall -O3 -g
 ifeq ($(OS), Windows_NT) # assume MinGW/Windows
 LIBS	      = -lm -llibopenbabel-3 -llibgsl -llibgslcblas -llibfminer
 else

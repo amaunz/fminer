@@ -21,7 +21,7 @@
 # PATH TO LIBFMINER SOURCE DIRECTORY:
 LIBDIR        = /home/am/validations/last
 # ADJUST COMPILER PATH TO OPENBABEL INCLUDE FILES (1st line Linux, 2nd line Windows):
-INCLUDE_OB    = -I/usr/local/include/openbabel-2.0
+INCLUDE_OB    = -I/usr/local/include/openbabel-2.0 -I/usr/include/openbabel-2.0
 INCLUDE_OB   += -I/home/openbabel-2.2.1/include
 # ADJUST COMPILER PATH TO GSL INCLUDE FILES (1st line Linux, 2nd line Windows):
 INCLUDE_GSL   = -I/usr/include

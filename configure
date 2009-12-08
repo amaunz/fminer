@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# configure
+# © 2008 by Andreas Maunz, andreas@maunz.de, jun 2008
+
+# This file is part of LibFminer (libfminer).
+#
+# LibFminer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# LibFminer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with LibFminer.  If not, see <http://www.gnu.org/licenses/>.
+
+
+# REQUIRED PACKAGES
+packs=( "openbabel-2.0" "gsl" )
+# ADJUST COMPILER PATH:
+cflags_k=( "INCLUDE_OB" "INCLUDE_GSL" )
+# ADJUST LINKER PATH:
+libs_k=( "LDFLAGS_OB" "LDFLAGS_GSL" )
+
+# FOR RUBY TARGET: ADJUST COMPILER PATH TO RUBY HEADERS
+#cflags_k["RUBY"]="INCLUDE_RB    = "
+
+# GET VALUES
+status=0
+for i in `echo "0 1"`; do
+    cflags=`pkg-config --cflags "${packs[$i]}"`
+    if [ $? == 1 ]; then  
+        cflags="${packs[$i]} NOT FOUND"
+        status=1
+    fi
+    sed -i "s,^${cflags_k[$i]}.*,${cflags_k[$i]}  =  $cflags,g" Makefile
+    echo ${cflags_k[$i]} = $cflags
+    
+    libs=`pkg-config --libs-only-L "${packs[$i]}"`
+    if [ $? == 1 ]; then  
+        libs="${packs[$i]} NOT FOUND"
+        status=1
+    fi
+    sed -i "s,^${libs_k[$i]}.*,${libs_k[$i]}  =  $libs,g" Makefile
+    echo ${libs_k[$i]} = $libs
+done
+
+ruby_ver=`ruby -v | awk '{print $2;}'` # ruby headers are not a library
+cflags_ruby=`locate ruby.h | grep $ruby_ver | head -1`
+if [ -z $cflags_ruby ]; then
+    cflags_ruby="$ruby_ver NOT FOUND"
+    status=1
+fi
+sed -i "s,^INCLUDE_RB.*,INCLUDE_RB  =  $cflags_ruby,g" Makefile
+echo "INCLUDE_RB  =  $cflags_ruby"
+
+if [ $status == 1 ]; then
+    echo
+    echo "WARNING: At least one variable could not be set (see output above). You will not be able to compile."
+fi

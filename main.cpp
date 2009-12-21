@@ -160,12 +160,27 @@ void read_act (char* act_file) {
 
 			else if (field_nr == 2) {	    // ACTIVITY VALUES
                 stringstream str;
+
                 str  << tmp_field; int act_value; str >> act_value;
+                // KS: convert to float
+                // KS: str  << tmp_field; float act_value; str >> act_value;
+                
                 if ((act_value != 0) && act_value != 1) { 
                     cerr << "Error! Invalid activity: '" << tmp_field << "' in file '" << act_file << "', line " << line_nr << "." << endl; 
                     exit(1);
                 }
+                // KS: check float for equality
+                /* KS:
+                if (!fm::regr && (act_value != 0.0) && act_value != 1.0) { 
+                    cerr << "Error! Invalid activity: '" << tmp_field << "' in file '" << act_file << "', line " << line_nr << "." << endl; 
+                    exit(1);
+                }
+                */
+
                 fminer->AddActivity((bool) act_value, tid);
+                // KS: Do not convert to bool
+                // KS: fminer->AddActivity(act_value, tid);
+                
                 field_nr=3;
 			}
 
@@ -175,6 +190,13 @@ void read_act (char* act_file) {
 			}
 
 		}
+
+        if (field_nr != 3) {
+            cerr << "Error! Line no. " << line_nr << " in file '" << act_file << "' is not in correct input format. Please refer to README." << endl;
+            exit(1);
+        }
+
+
 	}
 
 
@@ -208,6 +230,7 @@ int main(int argc, char *argv[], char *envp[]) {
     bool line_nrs = false;
     bool bbrc_sep = false;
     bool most_specific_trees_only = false;
+    bool do_regression;
 
 
     // FILE ARGUMENT READ
@@ -245,7 +268,7 @@ int main(int argc, char *argv[], char *envp[]) {
     
     // OPTIONS ARGUMENT READ
     char c;
-    const char* const short_options = "f:l:p:saubmdonrh";
+    const char* const short_options = "f:l:p:saubmdonrgh";
     const struct option long_options[] = {
         {"minfreq",                1, NULL, 'f'},
         {"level",                  1, NULL, 'l'},
@@ -259,6 +282,7 @@ int main(int argc, char *argv[], char *envp[]) {
         {"no-output",              0, NULL, 'o'},
         {"line-nrs",               0, NULL, 'n'},
         {"bbrc-sep",               0, NULL, 'r'},
+        {"regression",             0, NULL, 'g'},
         {"help",                   0, NULL, 'h'},
         {NULL,                     0, NULL, 0}
     };
@@ -304,6 +328,9 @@ int main(int argc, char *argv[], char *envp[]) {
         case 'r':
             bbrc_sep = true;
             break;
+        case 'g':
+            do_regression = true;
+            break;
         case 'h':
             status=2;
             break;
@@ -318,6 +345,7 @@ int main(int argc, char *argv[], char *envp[]) {
 
     // INTEGRITY CONSTRAINTS AND HELP OUTPUT
     if ((adjust_ub && !do_pruning) || (!do_backbone && adjust_ub) || (do_backbone && most_specific_trees_only)) status = 1;
+    if (do_regression && (!adjust_ub || !do_backbone || most_specific_trees_only || !do_pruning) ) status = 1; // KS: enforce d,b,m,u flags not set
              
 
     bool input_smi = false, input_gsp = false;
@@ -332,6 +360,7 @@ int main(int argc, char *argv[], char *envp[]) {
 
     if (status > 0) {
         cerr << "Usage: " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-o] [-n] [-r] [-d [-b [-m] | -u]] [-p p_value] <graphs> <activities>" << endl;
+        cerr << "Usage: " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-o] [-n] [-r] [-g] [-p p_value] <graphs> <activities>" << endl;
         cerr << "       " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-o] [-n] [-r] <graphs>" << endl;
         cerr << endl;
     }
@@ -351,6 +380,7 @@ int main(int argc, char *argv[], char *envp[]) {
         cerr << "       -o  --no-output              Switch off output (default: on)." << endl;
         cerr << "       -n  --line-nrs               Switch on line numbers in output file (default: off)." << endl;
         cerr << "       -r  --bbrc-sep               Switch on BBRC separator in result vector (default: off)." << endl;
+        cerr << "       -g  --regression             Use regression (EXPERIMENTAL! default: off)." << endl;
         cerr << endl;
         cerr << "  Upper bound pruning options:" << endl;
         cerr << "       -a  --aromaticity            Switch on aromatic ring perception when using smiles input format (default: off)." << endl;
@@ -387,6 +417,7 @@ int main(int argc, char *argv[], char *envp[]) {
     fminer->SetLineNrs(line_nrs);
     fminer->SetBbrcSep(bbrc_sep);
     fminer->SetMostSpecTreesOnly(most_specific_trees_only);
+    fminer->SetRegression(do_regression); // KS: set flag
 
     
     //////////

@@ -17,13 +17,13 @@
 # along with Fminer.  If not, see <http://www.gnu.org/licenses/>.
 
 # PATH TO LIBFMINER SOURCE DIRECTORY:
-LIBDIR        = /home/am/validations/last
+LIBDIR        = /home/am/validations/libfminer
 
-INCLUDE_OB    =  
-INCLUDE_GSL   =   
-LDFLAGS_OB    = 
-LDFLAGS_GSL   =   
-INCLUDE_RB    =
+INCLUDE_OB  =  -I/usr/local/include/openbabel-2.0  
+INCLUDE_GSL  =   
+LDFLAGS_OB  =  -L/usr/local/lib  
+LDFLAGS_GSL  =   
+INCLUDE_RB  =  1.9.1p243 NOT FOUND
 
 # EXAMPLES:
 # ADJUST COMPILER PATH TO OPENBABEL INCLUDE FILES (1st line Linux, 2nd line Windows):

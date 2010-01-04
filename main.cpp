@@ -230,7 +230,7 @@ int main(int argc, char *argv[], char *envp[]) {
     bool line_nrs = false;
     bool bbrc_sep = false;
     bool most_specific_trees_only = false;
-    bool do_regression;
+    bool do_regression = false;
 
 
     // FILE ARGUMENT READ

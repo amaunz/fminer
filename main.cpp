@@ -114,7 +114,7 @@ void read_smi (char* graph_file) {
 
 }
 
-void read_act (char* act_file) {
+void read_act (char* act_file, bool regr) {
     ifstream input;
     string line;
     string tmp_field;
@@ -161,25 +161,25 @@ void read_act (char* act_file) {
 			else if (field_nr == 2) {	    // ACTIVITY VALUES
                 stringstream str;
 
-                str  << tmp_field; int act_value; str >> act_value;
+                // KS: str  << tmp_field; int act_value; str >> act_value;
                 // KS: convert to float
-                // KS: str  << tmp_field; float act_value; str >> act_value;
+                str  << tmp_field; float act_value; str >> act_value;
                 
+                /* KS:
                 if ((act_value != 0) && act_value != 1) { 
                     cerr << "Error! Invalid activity: '" << tmp_field << "' in file '" << act_file << "', line " << line_nr << "." << endl; 
                     exit(1);
                 }
+                */
                 // KS: check float for equality
-                /* KS:
-                if (!fm::regr && (act_value != 0.0) && act_value != 1.0) { 
+                if (!regr && (act_value != 0.0) && act_value != 1.0) { 
                     cerr << "Error! Invalid activity: '" << tmp_field << "' in file '" << act_file << "', line " << line_nr << "." << endl; 
                     exit(1);
                 }
-                */
 
-                fminer->AddActivity((bool) act_value, tid);
+                // KS: fminer->AddActivity((bool) act_value, tid);
                 // KS: Do not convert to bool
-                // KS: fminer->AddActivity(act_value, tid);
+                fminer->AddActivity(act_value, tid);
                 
                 field_nr=3;
 			}
@@ -429,7 +429,7 @@ int main(int argc, char *argv[], char *envp[]) {
         if (input_smi) read_smi (graph_file);
         else if (input_gsp) read_gsp (graph_file);
         cerr << "Reading activities..." << endl;
-        read_act (act_file);
+        read_act (act_file, fminer->GetRegression());
     }
     
     else if (graph_file) {

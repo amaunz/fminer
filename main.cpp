@@ -360,7 +360,6 @@ int main(int argc, char *argv[], char *envp[]) {
 
     if (status > 0) {
         cerr << "Usage: " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-o] [-n] [-r] [-d [-b [-m] | -u]] [-p p_value] <graphs> <activities>" << endl;
-        cerr << "Usage: " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-o] [-n] [-r] [-g] [-p p_value] <graphs> <activities>" << endl;
         cerr << "       " << program_name << " [-f minfreq] [-l type] [-s] [-a] [-o] [-n] [-r] <graphs>" << endl;
         cerr << endl;
     }
@@ -380,7 +379,6 @@ int main(int argc, char *argv[], char *envp[]) {
         cerr << "       -o  --no-output              Switch off output (default: on)." << endl;
         cerr << "       -n  --line-nrs               Switch on line numbers in output file (default: off)." << endl;
         cerr << "       -r  --bbrc-sep               Switch on BBRC separator in result vector (default: off)." << endl;
-        cerr << "       -g  --regression             Use regression (EXPERIMENTAL! default: off)." << endl;
         cerr << endl;
         cerr << "  Upper bound pruning options:" << endl;
         cerr << "       -a  --aromaticity            Switch on aromatic ring perception when using smiles input format (default: off)." << endl;
@@ -417,7 +415,7 @@ int main(int argc, char *argv[], char *envp[]) {
     fminer->SetLineNrs(line_nrs);
     fminer->SetBbrcSep(bbrc_sep);
     fminer->SetMostSpecTreesOnly(most_specific_trees_only);
-    fminer->SetRegression(do_regression); // KS: set flag
+    fminer->SetRegression(do_regression); // KS: set flag to activate KS test at fixed 95%
 
     
     //////////

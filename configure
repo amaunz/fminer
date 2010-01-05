@@ -62,3 +62,4 @@ if [ $status == 1 ]; then
     echo
     echo "WARNING: At least one variable could not be set (see output above). You will not be able to compile."
 fi
+exit $status

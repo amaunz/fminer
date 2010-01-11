@@ -49,13 +49,14 @@ for i in `echo "0 1"`; do
     echo ${libs_k[$i]} = $libs
 done
 
-ruby_ver=`ruby -v | awk '{print $2;}'` # ruby headers are not a library
+ruby_ver="ruby\/1.8" # ruby headers are not a library
 cflags_ruby=`locate ruby.h | grep $ruby_ver | head -1`
 if [ -z $cflags_ruby ]; then
     cflags_ruby="$ruby_ver NOT FOUND"
     status=1
 fi
-sed -i "s,^INCLUDE_RB.*,INCLUDE_RB  =  $cflags_ruby,g" Makefile
+cflags_ruby="-I`dirname $cflags_ruby`"
+sed -i "s,^INCLUDE_RB.*,INCLUDE_RB  = $cflags_ruby,g" Makefile
 echo "INCLUDE_RB  =  $cflags_ruby"
 
 if [ $status == 1 ]; then

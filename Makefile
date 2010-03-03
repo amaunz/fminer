@@ -17,7 +17,7 @@
 # along with Fminer.  If not, see <http://www.gnu.org/licenses/>.
 
 # PATH TO LIBFMINER SOURCE DIRECTORY:
-LIBDIR        = /home/am/validations/last
+LIBDIR        = /home/am/validations/libfminer
 
 INCLUDE_OB  =  -I/usr/local/include/openbabel-2.0  
 INCLUDE_GSL  =   
